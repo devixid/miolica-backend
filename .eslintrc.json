@@ -1,0 +1,64 @@
+{
+  "env": {
+    "browser": true,
+    "es2021": true,
+    "node": true,
+    "mongo": true
+  },
+  "settings": {
+    "import/resolver": {
+      "node": {
+        "paths": ["src"],
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      },
+      "alias": {
+        "map": [["@", "./src"]],
+        "extensions": [".js", ".jsx", ".ts", ".tsx"]
+      }
+    }
+  },
+  "extends": [
+    "airbnb-base",
+    "prettier",
+    "eslint:recommended",
+    "plugin:prettier/recommended",
+    "plugin:eslint-plugin/recommended",
+    "plugin:security/recommended"
+  ],
+  "overrides": [
+    {
+      "files": ["*.js", "*.cjs", "*.mjs", "*.jsx"]
+    }
+  ],
+  "parserOptions": {
+    "ecmaVersion": "latest",
+    "sourceType": "module"
+  },
+  "plugins": [
+    "eslint-plugin",
+    "import",
+    "jsdoc",
+    "prettier",
+    "promise",
+    "security"
+  ],
+  "rules": {
+    "quotes": [2, "double"],
+    "semi": [2, "always"],
+    "no-underscore-dangle": 0,
+    "import/prefer-default-export": 0,
+    "no-console": 0,
+    "prettier/prettier": [
+      2,
+      {
+        "semi": true,
+        "tabWidth": 2,
+        "printWidth": 80,
+        "endOfLine": "auto",
+        "singleAttributePerLine": true,
+        "singleQuote": false,
+        "trailingComma": "all"
+      }
+    ]
+  }
+}
