@@ -1,6 +1,6 @@
 import mongoose, { Schema } from "mongoose";
 
-export const addressSchema = new Schema({
+export const addressesSchema = new Schema({
   address_id: {
     type: mongoose.ObjectId,
     default: new mongoose.Types.ObjectId(),

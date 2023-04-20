@@ -38,7 +38,7 @@ const login = (req, res) => {
 
   // handler method get data user
   const getUser = async () => {
-    // query to search data user from collection
+    // query to get data user from collection
     const data = await Users.find({
       $and: [
         {
@@ -53,8 +53,22 @@ const login = (req, res) => {
   };
   getUser();
 
-  if (!getUser().data) return res.send("data tidak ditemukan").status(404); // jika data tidak ditemukan
-  return res.send(getUser().data).status(200); // jika data tidak ditemukan
+  // validator jika data ada atau tidak
+  if (!getUser().data) {
+    return res
+      .json({
+        status: false,
+        message: "data tidak ditemukan!",
+      })
+      .status(404);
+  }
+  return res
+    .json({
+      status: true,
+      message: "data ditemukan",
+      data: getUser().data,
+    })
+    .status(200);
 };
 login(); // aktifasi handler
 
@@ -64,7 +78,7 @@ const updatePassword = (req, res) => {
   const findEmail = Users.findIndex((user) => user.email === email);
   const findUsername = Users.findIndex((user) => user.username === username);
 
-  // update password by email
+  // validator update password by email
   if (findEmail !== -1) {
     Users.updateOne({
       $set: {
@@ -76,8 +90,6 @@ const updatePassword = (req, res) => {
         status: true,
         message: `user dengan email ${email} berhasil diperbarui`,
         data: Users,
-        method: req.method,
-        url: req.url,
       })
       .status(200);
   } else {
@@ -89,7 +101,7 @@ const updatePassword = (req, res) => {
       .status(404);
   }
 
-  // update password by username
+  // validator update password by username
   if (findUsername !== -1) {
     Users.updateOne({
       $set: {
@@ -101,8 +113,6 @@ const updatePassword = (req, res) => {
         status: true,
         message: `user dengan username ${username} berhasil diperbarui`,
         data: Users,
-        method: req.method,
-        url: req.url,
       })
       .status(200);
   } else {

@@ -40,50 +40,52 @@ export const usersSchema = new Schema({
     required: true,
     maxLength: 50,
   },
-  wishlist: {
-    type: Object,
-    wishlist_id: {
-      type: mongoose.ObjectId,
-      default: new mongoose.Types.ObjectId(),
+  wishlist: [
+    {
+      wishlist_id: {
+        type: mongoose.ObjectId,
+        default: new mongoose.Types.ObjectId(),
+      },
+      productName: {
+        type: Schema.Types.ObjectId,
+        ref: "Products",
+      },
+      unitPrice: {
+        type: Schema.Types.ObjectId,
+        ref: "Products",
+      },
+      category: {
+        type: Schema.Types.ObjectId,
+        ref: "Products",
+      },
     },
-    productName: {
-      type: String,
-      ref: "Products",
+  ],
+  cart: [
+    {
+      cart_id: {
+        type: mongoose.ObjectId,
+        default: new mongoose.Types.ObjectId(),
+      },
+      product_id: {
+        type: Schema.Types.ObjectId,
+        ref: "Products",
+      },
+      quantity: {
+        type: Number,
+        required: true,
+        max: 3,
+      },
+      totalPrice: {
+        type: Number,
+        required: true,
+        max: 9,
+      },
     },
-    unitPrice: {
-      type: Number,
-      ref: "Products",
-    },
-    category: {
-      type: String,
-      ref: "Products",
-    },
-  },
-  cart: {
-    type: Object,
-    cart_id: {
-      type: mongoose.ObjectId,
-      default: new mongoose.Types.ObjectId(),
-    },
-    product_id: {
-      type: Schema.Types.ObjectId,
-      ref: "Products",
-    },
-    quantity: {
-      type: Number,
-      required: true,
-      max: 3,
-    },
-    totalPrice: {
-      type: Number,
-      required: true,
-      max: 9,
-    },
-  },
+  ],
   photoProfile: String,
   saldo: {
     type: Number,
-    default: 0,
+    default: new NumberLong(0),
     min: 1,
     max: 15,
   },
