@@ -33,7 +33,7 @@ const signup = (req, res) => {
 signup();
 
 // handler user login
-const login = (req, res) => {
+export const login = (req, res) => {
   const { email, username, password } = req.body;
 
   // handler method get data user
