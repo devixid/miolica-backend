@@ -69,3 +69,33 @@ const getAllProducts = async (req, res) => {
     .status(200);
 };
 getAllProducts();
+
+// handler get by name pada products
+const getProductByName = async (req, res) => {
+  const { productName } = req.body;
+
+  // query to get data products from collection
+  const data = await Products.findMany({
+    productName: {
+      $eq: productName,
+    },
+  });
+
+  // validator if data exist or not
+  if (!data) {
+    return res
+      .json({
+        status: false,
+        message: `products dengan nama ${productName} tidak ditemukan!`,
+      })
+      .status(404);
+  }
+  return res
+    .json({
+      status: true,
+      message: `products dengan nama ${productName} ditemukan`,
+      data,
+    })
+    .status(200);
+};
+getProductByName();

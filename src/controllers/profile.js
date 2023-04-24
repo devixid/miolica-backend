@@ -33,7 +33,7 @@ const profile = (req, res) => {
   };
   getProfileByUsername();
 
-  // validator jika data ada atau tidak
+  // validator if data exist or not
   if (!getProfileByUsername().data) {
     return res
       .json({
