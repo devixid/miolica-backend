@@ -99,3 +99,33 @@ const getProductByName = async (req, res) => {
     .status(200);
 };
 getProductByName();
+
+// handler get by categries pada products
+const getProductByCategories = async (req, res) => {
+  const { Category } = req.body;
+
+  // query to get data products from collection
+  const data = await Products.findMany({
+    "itemCategory.Category": {
+      $eq: Category,
+    },
+  });
+
+  // validator if data exist or not
+  if (!data) {
+    return res
+      .json({
+        status: false,
+        message: `products dengan categories ${Category} tidak ditemukan!`,
+      })
+      .status(404);
+  }
+  return res
+    .json({
+      status: true,
+      message: `products dengan categories ${Category} ditemukan`,
+      data,
+    })
+    .status(200);
+};
+getProductByCategories();
