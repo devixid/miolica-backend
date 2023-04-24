@@ -3,10 +3,11 @@ import mongoose from "mongoose";
 
 // handler user signup method post
 const signup = (req, res) => {
+  // take data from req body
   const { username, email, password, name, address } = req.body;
 
   // input data into docs
-  const signUpQuery = new Users({
+  const signUpDocs = new Users({
     users_id: new mongoose.Types.ObjectId(),
     username,
     email,
@@ -15,9 +16,9 @@ const signup = (req, res) => {
     address,
   });
 
-  // saving data into collection
+  // saving docs into collection
   const save = async () => {
-    await signUpQuery.save((error, data) => {
+    await signUpDocs.save((error, data) => {
       // message when data not saved
       if (error) res.send(error);
 
@@ -25,7 +26,7 @@ const signup = (req, res) => {
       res.send(data);
       res.send("data berhasil diinput");
     });
-    return signUpQuery;
+    return signUpDocs;
   };
   save();
 };
@@ -53,7 +54,7 @@ export const login = (req, res) => {
   };
   getUser();
 
-  // validator jika data ada atau tidak
+  // validator if data exist or not
   if (!getUser().data) {
     return res
       .json({

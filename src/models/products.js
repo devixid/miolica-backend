@@ -44,8 +44,20 @@ export const productSchema = new Schema({
     maxLength: 50,
   },
   itemCategory: {
-    type: Schema.Types.ObjectId,
-    ref: "Categorys",
+    category_id: {
+      type: mongoose.ObjectId,
+      default: new mongoose.Types.ObjectId(),
+    },
+    Category: {
+      type: String,
+      minLength: 3,
+      maxLength: 15,
+    },
+    descriptionCategory: {
+      type: String,
+      maxLength: 50,
+    },
+    thumbnailPhoto: String,
   },
   QuantityProduct: {
     type: Number,
