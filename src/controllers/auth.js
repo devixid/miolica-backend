@@ -20,11 +20,23 @@ const signup = (req, res) => {
   const save = async () => {
     await signUpDocs.save((error, data) => {
       // message when data not saved
-      if (error) res.send(error);
+      if (error) {
+        return res
+          .json({
+            status: false,
+            message: error,
+          })
+          .status(404);
+      }
 
       // message when data successfully saved
-      res.send(data);
-      res.send("data berhasil diinput");
+      return res
+        .json({
+          status: true,
+          message: "data berhasil diinput",
+          data,
+        })
+        .status(200);
     });
     return signUpDocs;
   };

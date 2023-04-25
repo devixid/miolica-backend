@@ -11,7 +11,7 @@ const addProduct = (req, res) => {
     unitPrice,
     address,
     location,
-    itemCategory,
+    Category,
     QuantityProduct,
     storeName,
   } = req.body;
@@ -25,7 +25,7 @@ const addProduct = (req, res) => {
     unitPrice,
     address,
     location,
-    itemCategory,
+    Category,
     QuantityProduct,
     storeName,
   });
@@ -34,11 +34,23 @@ const addProduct = (req, res) => {
   const save = async () => {
     await addProductDocs.save((error, data) => {
       // message when data not saved
-      if (error) res.send(error);
+      if (error) {
+        return res
+          .json({
+            status: false,
+            message: error,
+          })
+          .status(404);
+      }
 
       // message when data successfully saved
-      res.send(data);
-      res.send("data berhasil diinput");
+      return res
+        .json({
+          status: true,
+          message: "data berhasil diinput",
+          data,
+        })
+        .status(200);
     });
     return addProductDocs;
   };
@@ -77,7 +89,8 @@ const getProductByName = async (req, res) => {
   // query to get data products from collection
   const data = await Products.findMany({
     productName: {
-      $eq: productName,
+      $regex: /productName/,
+      $options: "i",
     },
   });
 
@@ -106,7 +119,7 @@ const getProductByCategories = async (req, res) => {
 
   // query to get data products from collection
   const data = await Products.findMany({
-    "itemCategory.Category": {
+    Category: {
       $eq: Category,
     },
   });
