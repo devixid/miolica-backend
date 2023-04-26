@@ -58,6 +58,10 @@ export const usersSchema = new Schema({
   ],
   cart: [
     {
+      cart_id: {
+        type: mongoose.ObjectId,
+        default: new mongoose.Types.ObjectId(),
+      },
       product_id: {
         type: Schema.Types.ObjectId,
         ref: "Products",
