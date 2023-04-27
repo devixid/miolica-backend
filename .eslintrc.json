@@ -43,6 +43,7 @@
     "security"
   ],
   "rules": {
+    "camelcase": [0, { "properties": "never" }],
     "quotes": [2, "double"],
     "semi": [2, "always"],
     "no-underscore-dangle": 0,

@@ -5,36 +5,21 @@ import { login } from "./auth";
 const id = login().getUser().data.users_id;
 
 // handler method get pada profile
-const profile = (req, res) => {
+const getProfileByUsername = async (req, res) => {
   const { username } = req.body;
+
   // query to get data profile from collection
-  const getProfileByUsername = async () => {
-    const data = await Users.findOne({
+  const data = await Users.findOne(
+    {
       username: {
         $eq: username,
       },
-    })
-      .populate("Wishlist.productName", "productName")
-      .populate("Wishlist.unitPrice", "unitPrice")
-      .populate("Wishlist.category", "category")
-      .populate(
-        "Cart.product_id",
-        " productName",
-        "descriptionProduct",
-        "photoProduct",
-        "unitPrice",
-        "address",
-        "location",
-        "QuantityProduct",
-      )
-      .populate("Cart.product_id.itemCategory", "Category")
-      .populate("Cart.product_id.storeName", "storeName");
-    return data;
-  };
-  getProfileByUsername();
+    },
+    { cart: 0, wishlist: 0 },
+  );
 
   // validator if data exist or not
-  if (!getProfileByUsername().data) {
+  if (!data) {
     return res
       .json({
         status: false,
@@ -46,11 +31,11 @@ const profile = (req, res) => {
     .json({
       status: true,
       message: "data ditemukan",
-      data: getProfileByUsername().data,
+      data,
     })
     .status(200);
 };
-profile();
+getProfileByUsername();
 
 // handler untuk update profile
 const updateProfileById = (req, res) => {
