@@ -1,5 +1,9 @@
 import { Users } from "@/models";
 import mongoose from "mongoose";
+// fetch id from handler login getUser
+import { login } from "./auth";
+
+const id = login().getUser().data.users_id;
 
 // handler method post dan put pada cart
 const addCart = (req, res) => {
@@ -47,3 +51,47 @@ const addCart = (req, res) => {
 addCart();
 
 // handler method get pada cart
+const getCartById = async (req, res) => {
+  // query to get data cart from collection
+  const data = await Users.findOne(
+    {
+      users_id: {
+        $eq: id,
+      },
+    },
+    {
+      username: 0,
+      email: 0,
+      password: 0,
+      name: 0,
+      address: 0,
+      wishlist: 0,
+      photoProfile: 0,
+      saldo: 0,
+    },
+  ).populate(
+    "Products",
+    " productName",
+    "descriptionProduct",
+    "photoProduct",
+    "unitPrice",
+  );
+
+  // validator if data exist or not
+  if (!data) {
+    return res
+      .json({
+        status: false,
+        message: "data tidak ditemukan!",
+      })
+      .status(404);
+  }
+  return res
+    .json({
+      status: true,
+      message: "data ditemukan",
+      data,
+    })
+    .status(200);
+};
+getCartById();
