@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 // fetch id from handler login getUser
 import { login } from "./auth";
 
-const id = login().getUser().data.users_id;
+const userId = login().getUser().data.users_id;
 
 // handler method post dan put pada cart
 const addCart = (req, res) => {
@@ -56,7 +56,7 @@ const getCartById = async (req, res) => {
   const data = await Users.findOne(
     {
       users_id: {
-        $eq: id,
+        $eq: userId,
       },
     },
     {
@@ -71,7 +71,7 @@ const getCartById = async (req, res) => {
     },
   ).populate(
     "Products",
-    " productName",
+    "productName",
     "descriptionProduct",
     "photoProduct",
     "unitPrice",
@@ -95,3 +95,28 @@ const getCartById = async (req, res) => {
     .status(200);
 };
 getCartById();
+
+// handler method get pada cart
+const deleteCartById = (req, res) => {
+  const { cart_id } = req.body;
+  // search data from collection based on cart_id
+  const deleteCart = Users.deleteOne({
+    cart: { $elemMatch: { cart_id } },
+  });
+
+  if (!deleteCart) {
+    return res
+      .json({
+        status: false,
+        message: "data cart gagal dihapus",
+      })
+      .status(404);
+  }
+  return res
+    .json({
+      status: true,
+      message: "data cart berhasil dihapus",
+    })
+    .status(200);
+};
+deleteCartById();

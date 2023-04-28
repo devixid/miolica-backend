@@ -2,7 +2,7 @@ import { Users } from "@/models";
 // fetch id from handler login getUser
 import { login } from "./auth";
 
-const id = login().getUser().data.users_id;
+const userId = login().getUser().data.users_id;
 
 // handler method get pada profile
 const getProfileByUsername = async (req, res) => {
@@ -51,7 +51,7 @@ const updateProfileById = (req, res) => {
   } = req.body;
 
   // validator update password by id
-  if (id) {
+  if (userId) {
     Users.updateOne({
       $set: {
         username,
@@ -67,7 +67,7 @@ const updateProfileById = (req, res) => {
     res
       .json({
         status: true,
-        message: `user dengan id ${id} berhasil diperbarui`,
+        message: `user dengan id ${userId} berhasil diperbarui`,
         data: Users,
       })
       .status(200);
@@ -75,7 +75,7 @@ const updateProfileById = (req, res) => {
     res
       .json({
         status: false,
-        message: `user dengan id ${id} tidak ditemukan`,
+        message: `user dengan id ${userId} tidak ditemukan`,
       })
       .status(404);
   }
