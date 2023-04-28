@@ -88,11 +88,12 @@ login(); // aktifasi handler
 // handler update password user
 const updatePassword = (req, res) => {
   const { email, username, password } = req.body;
-  const findEmail = Users.findIndex((user) => user.email === email);
-  const findUsername = Users.findIndex((user) => user.username === username);
+  // validator if email or usernme exist or not
+  const findEmail = Users.findOne({ email });
+  const findUsername = Users.findIndex({ username });
 
   // validator update password by email
-  if (findEmail !== -1) {
+  if (findEmail) {
     Users.updateOne({
       $set: {
         password,
@@ -115,7 +116,7 @@ const updatePassword = (req, res) => {
   }
 
   // validator update password by username
-  if (findUsername !== -1) {
+  if (findUsername) {
     Users.updateOne({
       $set: {
         password,

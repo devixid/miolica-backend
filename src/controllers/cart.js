@@ -19,12 +19,13 @@ const addCart = (req, res) => {
     },
   ];
 
-  const findCart = Users.findIndex(
-    (user) => user.cart.cart_id === cart.cart_id,
-  );
+  // validator if cart exist or not
+  const findCart = Users.find({
+    cart,
+  });
 
   // validator update and add cart by cart_id
-  if (findCart === undefined) {
+  if (!findCart) {
     Users.insertOne({
       cart,
     });
