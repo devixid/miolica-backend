@@ -42,7 +42,7 @@ export const usersSchema = new Schema({
   },
   wishlist: [
     {
-      cart_id: {
+      wishlist_id: {
         type: mongoose.ObjectId,
         default: new mongoose.Types.ObjectId(),
       },

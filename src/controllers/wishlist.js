@@ -55,25 +55,13 @@ const addWishlist = (req, res) => {
 addWishlist();
 
 // handler method get pada cart
-const getCartById = async (req, res) => {
+const getWishlistById = async (req, res) => {
   // query to get data cart from collection
-  const data = await Users.findOne(
-    {
-      users_id: {
-        $eq: userId,
-      },
+  const data = await Users.findOne({
+    users_id: {
+      $eq: userId,
     },
-    {
-      username: 0,
-      email: 0,
-      password: 0,
-      name: 0,
-      address: 0,
-      wishlist: 0,
-      photoProfile: 0,
-      saldo: 0,
-    },
-  ).populate(
+  }).populate(
     "Products",
     "productName",
     "descriptionProduct",
@@ -98,29 +86,29 @@ const getCartById = async (req, res) => {
     })
     .status(200);
 };
-getCartById();
+getWishlistById();
 
 // handler method get pada cart
-const deleteCartById = (req, res) => {
-  const { cart_id } = req.body;
+const deleteWishlistById = (req, res) => {
+  const { wishlist_id } = req.body;
   // search data from collection based on cart_id
-  const deleteCart = Users.deleteOne({
-    cart: { $elemMatch: { cart_id } },
+  const deleteWishlist = Users.deleteOne({
+    cart: { $elemMatch: { wishlist_id } },
   });
 
-  if (!deleteCart) {
+  if (!deleteWishlist) {
     return res
       .json({
         status: false,
-        message: "data cart gagal dihapus",
+        message: "data wishlist gagal dihapus",
       })
       .status(404);
   }
   return res
     .json({
       status: true,
-      message: "data cart berhasil dihapus",
+      message: "data wishlist berhasil dihapus",
     })
     .status(200);
 };
-deleteCartById();
+deleteWishlistById();
