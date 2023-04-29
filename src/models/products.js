@@ -43,12 +43,12 @@ export const productSchema = new Schema({
     required: true,
     maxLength: 50,
   },
-  Category: {
+  category: {
     type: String,
     minLength: 3,
     maxLength: 15,
   },
-  QuantityProduct: {
+  quantityProduct: {
     type: Number,
     default: 0,
     min: 1,

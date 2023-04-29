@@ -42,7 +42,15 @@ export const usersSchema = new Schema({
   },
   wishlist: [
     {
+      cart_id: {
+        type: mongoose.ObjectId,
+        default: new mongoose.Types.ObjectId(),
+      },
       productName: {
+        type: Schema.Types.ObjectId,
+        ref: "Products",
+      },
+      descriptionProduct: {
         type: Schema.Types.ObjectId,
         ref: "Products",
       },

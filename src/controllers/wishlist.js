@@ -6,50 +6,53 @@ import { login } from "./auth";
 const userId = login().getUser().data.users_id;
 
 // handler method post dan put pada cart
-const addCart = (req, res) => {
+const addWishlist = (req, res) => {
   // take data from req body
-  const { product_id, quantity, totalPrice } = req.body;
+  const { productName, descriptionProduct, photoProduct, unitPrice, category } =
+    req.body;
 
-  const cart = [
+  const wishlist = [
     {
-      product_id,
       cart_id: new mongoose.Types.ObjectId(),
-      quantity,
-      totalPrice,
+      productName,
+      descriptionProduct,
+      photoProduct,
+      unitPrice,
+      category,
     },
   ];
 
-  // validator if cart exist or not
-  const findCart = Users.find({
-    cart,
+  // validator if wishlist exist or not
+  const findWishlist = Users.find({
+    wishlist,
   });
 
-  // validator update and add cart by cart_id
-  if (!findCart) {
+  // validator update and add wishlist by wishlist_id
+  if (!findWishlist) {
     Users.insertOne({
-      cart,
+      wishlist,
     });
     res
       .json({
         status: true,
-        message: "cart berhasil ditambahkan!",
+        message: "wishlist berhasil ditambahkan!",
         data: Users,
       })
       .status(200);
   } else {
     Users.updateOne({
-      cart,
+      wishlist,
     });
     res
       .json({
         status: true,
-        message: `cart dengan id ${cart.cart_id} berhasil diperbarui`,
+        message: `wishlist dengan id ${wishlist.wishlist_id} berhasil diperbarui`,
       })
       .status(200);
   }
-  return cart;
+  return wishlist;
 };
-addCart();
+addWishlist();
 
 // handler method get pada cart
 const getCartById = async (req, res) => {
@@ -76,7 +79,6 @@ const getCartById = async (req, res) => {
     "descriptionProduct",
     "photoProduct",
     "unitPrice",
-    "category",
   );
 
   // validator if data exist or not
