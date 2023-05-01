@@ -6,7 +6,7 @@ import { login } from "./auth";
 const userId = login().getUser().data.users_id;
 
 // handler method post dan put pada cart
-const addCart = (req, res) => {
+export const addCart = (req, res) => {
   // take data from req body
   const { product_id, quantity, totalPrice } = req.body;
 

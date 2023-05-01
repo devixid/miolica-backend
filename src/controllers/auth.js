@@ -2,7 +2,7 @@ import { Users } from "@/models";
 import mongoose from "mongoose";
 
 // handler user signup method post
-const signup = (req, res) => {
+export const signup = (req, res) => {
   // take data from req body
   const { username, email, password, name, address } = req.body;
 
@@ -42,32 +42,25 @@ const signup = (req, res) => {
   };
   save();
 };
-// aktifasi handler
-signup();
 
-// handler user login
-export const login = (req, res) => {
+// handler user login method get
+export const login = async (req, res) => {
   const { email, username, password } = req.body;
 
-  // handler method get data user
-  const getUser = async () => {
-    // query to get data user from collection
-    const data = await Users.find({
-      $and: [
-        {
-          $or: [{ username: { $eq: username } }, { email: { $eq: email } }],
-        },
-        {
-          password: { $eq: password },
-        },
-      ],
-    });
-    return data;
-  };
-  getUser();
+  // query to get data user from collection
+  const data = await Users.find({
+    $and: [
+      {
+        $or: [{ username: { $eq: username } }, { email: { $eq: email } }],
+      },
+      {
+        password: { $eq: password },
+      },
+    ],
+  });
 
   // validator if data exist or not
-  if (!getUser().data) {
+  if (!data) {
     return res
       .json({
         status: false,
@@ -79,14 +72,13 @@ export const login = (req, res) => {
     .json({
       status: true,
       message: "data ditemukan",
-      data: getUser().data,
+      data,
     })
     .status(200);
 };
-login(); // aktifasi handler
 
-// handler update password user
-const updatePassword = (req, res) => {
+// handler update password user method put
+export const updatePassword = (req, res) => {
   const { email, username, password } = req.body;
   // validator if email or usernme exist or not
   const findEmail = Users.findOne({ email });
@@ -138,4 +130,3 @@ const updatePassword = (req, res) => {
       .status(404);
   }
 };
-updatePassword(); // aktifasi handler

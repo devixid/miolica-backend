@@ -6,7 +6,7 @@ import { login } from "./auth";
 const userId = login().getUser().data.users_id;
 
 // handler method post dan put pada cart
-const addWishlist = (req, res) => {
+export const addWishlist = (req, res) => {
   // take data from req body
   const { productName, descriptionProduct, photoProduct, unitPrice, category } =
     req.body;
@@ -54,9 +54,9 @@ const addWishlist = (req, res) => {
 };
 addWishlist();
 
-// handler method get pada cart
+// handler method get pada wishlist
 const getWishlistById = async (req, res) => {
-  // query to get data cart from collection
+  // query to get data wishlist from collection
   const data = await Users.findOne({
     users_id: {
       $eq: userId,
@@ -91,7 +91,7 @@ getWishlistById();
 // handler method get pada cart
 const deleteWishlistById = (req, res) => {
   const { wishlist_id } = req.body;
-  // search data from collection based on cart_id
+  // search data from collection based on wishlist_id
   const deleteWishlist = Users.deleteOne({
     cart: { $elemMatch: { wishlist_id } },
   });

@@ -89,7 +89,7 @@ export const usersSchema = new Schema({
   photoProfile: String,
   saldo: {
     type: Number,
-    default: new NumberLong(0),
+    default: 0,
     min: 1,
     max: 15,
   },
