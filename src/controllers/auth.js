@@ -46,7 +46,7 @@ export const login = async (req, res) => {
   });
 
   // validator if data exist or not
-  if (!data.value) {
+  if (data == null) {
     return res
       .json({
         status: false,
@@ -65,98 +65,66 @@ export const login = async (req, res) => {
 
 // handler update password user method put
 export const updatePassword = async (req, res) => {
-  const { email, /* username, */ password } = req.body;
-  // validator if email or usernme exist or not
-  const findEmail = await Users.findOne({ email: { $eq: email } });
-  // const findUsername = await Users.findOne({ username: { $eq: username } });
+  const { email, username, password } = req.body;
 
-  if (findEmail) {
-    Users.updateOne({
-      $set: {
-        password,
-      },
-    });
-    res
-      .json({
-        status: true,
-        message: `user dengan email ${email} berhasil diperbarui`,
-        data: findEmail,
-      })
-      .status(200);
-  } else if (findEmail == null) {
-    res
-      .json({
-        status: false,
-        message: `user dengan email ${email} tidak ditemukan`,
-      })
-      .status(404);
-  }
-  /*
-  else if (findUsername) {
-    Users.updateOne({
-      $set: {
-        password,
-      },
-    });
-    res
-      .json({
-        status: true,
-        message: `user dengan username ${username} berhasil diperbarui`,
-        data: findUsername,
-      })
-      .status(200);
-  } else if (!findUsername) {
-    res
-      .json({
-        status: false,
-        message: `user dengan username ${username} tidak ditemukan`,
-      })
-      .status(404);
-  }
-*/
   // validator update password by email
-  /* if (!findEmail.value) {
+  if (email) {
+    const findEmail = await Users.findOne({ email });
+    if (findEmail) {
+      await Users.updateOne(
+        { email: { $eq: email } },
+        {
+          $set: {
+            password,
+          },
+        },
+      );
+      const updatedUser = await Users.findOne({ email });
+      res
+        .json({
+          status: true,
+          message: `user dengan email ${email} berhasil diperbarui`,
+          data: updatedUser,
+        })
+        .status(200);
+      return;
+    }
     res
       .json({
         status: false,
         message: `user dengan email ${email} tidak ditemukan`,
       })
       .status(404);
-  } else {
-    Users.updateOne({
-      $set: {
-        password,
-      },
-    });
-    res
-      .json({
-        status: true,
-        message: `user dengan email ${email} berhasil diperbarui`,
-        data: findEmail,
-      })
-      .status(200);
+    return;
   }
 
   // validator update password by username
-  if (!findUsername.value) {
+  if (username) {
+    const findUsername = await Users.findOne({ username });
+    if (findUsername) {
+      await Users.updateOne(
+        {},
+        {
+          $set: {
+            password,
+          },
+        },
+      );
+      const updatedUser = await Users.findOne({ username });
+      res
+        .json({
+          status: true,
+          message: `user dengan username ${username} berhasil diperbarui`,
+          data: updatedUser,
+        })
+        .status(200);
+      return;
+    }
     res
       .json({
         status: false,
         message: `user dengan username ${username} tidak ditemukan`,
       })
       .status(404);
-  } else {
-    Users.updateOne({
-      $set: {
-        password,
-      },
-    });
-    res
-      .json({
-        status: true,
-        message: `user dengan username ${username} berhasil diperbarui`,
-        data: findUsername,
-      })
-      .status(200);
-  } */
+  }
 };
