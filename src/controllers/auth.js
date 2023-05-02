@@ -17,28 +17,14 @@ export const signup = (req, res) => {
   });
 
   // saving docs into collection
-  const save = async () => {
-    await signUpDocs.save((error, data) => {
-      // message when data not saved
-      if (error) {
-        return res
-          .json({
-            status: false,
-            message: error,
-          })
-          .status(404);
-      }
-
-      // message when data successfully saved
-      return res
-        .json({
-          status: true,
-          message: "data berhasil diinput",
-          data,
-        })
-        .status(200);
-    });
-    return signUpDocs;
+  const save = () => {
+    signUpDocs.save();
+    return res
+      .json({
+        status: true,
+        message: "data berhasil diinput",
+      })
+      .status(200);
   };
   save();
 };
@@ -60,7 +46,7 @@ export const login = async (req, res) => {
   });
 
   // validator if data exist or not
-  if (!data) {
+  if (!data.value) {
     return res
       .json({
         status: false,
@@ -78,13 +64,12 @@ export const login = async (req, res) => {
 };
 
 // handler update password user method put
-export const updatePassword = (req, res) => {
-  const { email, username, password } = req.body;
+export const updatePassword = async (req, res) => {
+  const { email, /* username, */ password } = req.body;
   // validator if email or usernme exist or not
-  const findEmail = Users.findOne({ email });
-  const findUsername = Users.findIndex({ username });
+  const findEmail = await Users.findOne({ email: { $eq: email } });
+  // const findUsername = await Users.findOne({ username: { $eq: username } });
 
-  // validator update password by email
   if (findEmail) {
     Users.updateOne({
       $set: {
@@ -95,10 +80,10 @@ export const updatePassword = (req, res) => {
       .json({
         status: true,
         message: `user dengan email ${email} berhasil diperbarui`,
-        data: Users,
+        data: findEmail,
       })
       .status(200);
-  } else {
+  } else if (findEmail == null) {
     res
       .json({
         status: false,
@@ -106,9 +91,8 @@ export const updatePassword = (req, res) => {
       })
       .status(404);
   }
-
-  // validator update password by username
-  if (findUsername) {
+  /*
+  else if (findUsername) {
     Users.updateOne({
       $set: {
         password,
@@ -118,10 +102,10 @@ export const updatePassword = (req, res) => {
       .json({
         status: true,
         message: `user dengan username ${username} berhasil diperbarui`,
-        data: Users,
+        data: findUsername,
       })
       .status(200);
-  } else {
+  } else if (!findUsername) {
     res
       .json({
         status: false,
@@ -129,4 +113,50 @@ export const updatePassword = (req, res) => {
       })
       .status(404);
   }
+*/
+  // validator update password by email
+  /* if (!findEmail.value) {
+    res
+      .json({
+        status: false,
+        message: `user dengan email ${email} tidak ditemukan`,
+      })
+      .status(404);
+  } else {
+    Users.updateOne({
+      $set: {
+        password,
+      },
+    });
+    res
+      .json({
+        status: true,
+        message: `user dengan email ${email} berhasil diperbarui`,
+        data: findEmail,
+      })
+      .status(200);
+  }
+
+  // validator update password by username
+  if (!findUsername.value) {
+    res
+      .json({
+        status: false,
+        message: `user dengan username ${username} tidak ditemukan`,
+      })
+      .status(404);
+  } else {
+    Users.updateOne({
+      $set: {
+        password,
+      },
+    });
+    res
+      .json({
+        status: true,
+        message: `user dengan username ${username} berhasil diperbarui`,
+        data: findUsername,
+      })
+      .status(200);
+  } */
 };
