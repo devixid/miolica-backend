@@ -19,14 +19,25 @@ export const signup = (req, res) => {
   // saving docs into collection
   const save = () => {
     signUpDocs.save();
-    return res
-      .json({
-        status: true,
-        message: "data berhasil diinput",
-      })
-      .status(200);
   };
   save();
+
+  // validator
+  if (!save()) {
+    res
+      .json({
+        status: false,
+        message: "data gagal diinput",
+      })
+      .status(400);
+    return;
+  }
+  res
+    .json({
+      status: true,
+      message: "data berhasil diinput",
+    })
+    .status(200);
 };
 
 // handler user login method get
@@ -34,33 +45,24 @@ export const login = async (req, res) => {
   const { email, username, password } = req.body;
 
   // query to get data user from collection
-  const data = await Users.find({
-    $and: [
-      {
-        $or: [{ username: { $eq: username } }, { email: { $eq: email } }],
-      },
-      {
-        password: { $eq: password },
-      },
-    ],
+  const data = await Users.findOne({
+    $or: [{ username }, { email }],
+    password,
   });
 
   // validator if data exist or not
-  if (data == null) {
-    return res
-      .json({
-        status: false,
-        message: "data tidak ditemukan!",
-      })
-      .status(404);
-  }
-  return res
-    .json({
+  if (data) {
+    res.status(200).json({
       status: true,
       message: "data ditemukan",
       data,
-    })
-    .status(200);
+    });
+    return;
+  }
+  res.status(404).json({
+    status: false,
+    message: "data tidak ditemukan!",
+  });
 };
 
 // handler update password user method put
