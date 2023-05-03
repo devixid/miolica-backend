@@ -3,10 +3,10 @@ import mongoose from "mongoose";
 // fetch id from handler login getUser
 import { login } from "./auth";
 
-const userId = login().getUser().data.users_id;
+const userId = login().data.users_id;
 
 // handler method post dan put pada cart
-export const addWishlist = (req, res) => {
+export const addWishlist = async (req, res) => {
   // take data from req body
   const { productName, descriptionProduct, photoProduct, unitPrice, category } =
     req.body;
@@ -23,44 +23,50 @@ export const addWishlist = (req, res) => {
   ];
 
   // validator if wishlist exist or not
-  const findWishlist = Users.find({
-    wishlist,
+  const findWishlist = await Users.findOne({
+    "wishlist.wishlist_id": wishlist.wishlist_id,
   });
 
-  // validator update and add wishlist by wishlist_id
-  if (!findWishlist) {
-    Users.insertOne({
-      wishlist,
-    });
+  // logic to add wishlist
+  if (findWishlist == null) {
+    Users.updateOne(
+      {
+        users_id: userId,
+      },
+      {
+        $set: wishlist,
+      },
+    );
     res
       .json({
         status: true,
         message: "wishlist berhasil ditambahkan!",
-        data: Users,
       })
       .status(200);
-  } else {
-    Users.updateOne({
-      wishlist,
-    });
-    res
-      .json({
-        status: true,
-        message: `wishlist dengan id ${wishlist.wishlist_id} berhasil diperbarui`,
-      })
-      .status(200);
+    return;
   }
-  return wishlist;
+  // logic to update cart
+  Users.updateOne(
+    {
+      "wishlist.wishlist_id": wishlist.wishlist_id,
+    },
+    {
+      $set: wishlist,
+    },
+  );
+  res
+    .json({
+      status: true,
+      message: "wishlist berhasil diperbarui",
+    })
+    .status(200);
 };
-addWishlist();
 
 // handler method get pada wishlist
-const getWishlistById = async (req, res) => {
+export const getWishlistById = async (req, res) => {
   // query to get data wishlist from collection
   const data = await Users.findOne({
-    users_id: {
-      $eq: userId,
-    },
+    users_id: userId,
   }).populate(
     "Products",
     "productName",
@@ -70,15 +76,16 @@ const getWishlistById = async (req, res) => {
   );
 
   // validator if data exist or not
-  if (!data) {
-    return res
+  if (data == null) {
+    res
       .json({
         status: false,
         message: "data tidak ditemukan!",
       })
       .status(404);
+    return;
   }
-  return res
+  res
     .json({
       status: true,
       message: "data ditemukan",
@@ -86,29 +93,28 @@ const getWishlistById = async (req, res) => {
     })
     .status(200);
 };
-getWishlistById();
 
 // handler method get pada cart
-const deleteWishlistById = (req, res) => {
+export const deleteWishlistById = (req, res) => {
   const { wishlist_id } = req.body;
   // search data from collection based on wishlist_id
   const deleteWishlist = Users.deleteOne({
     cart: { $elemMatch: { wishlist_id } },
   });
 
-  if (!deleteWishlist) {
-    return res
+  if (deleteWishlist) {
+    res
       .json({
-        status: false,
-        message: "data wishlist gagal dihapus",
+        status: true,
+        message: "data wishlist berhasil dihapus",
       })
-      .status(404);
+      .status(200);
+    return;
   }
-  return res
+  res
     .json({
-      status: true,
-      message: "data wishlist berhasil dihapus",
+      status: false,
+      message: "data wishlist gagal dihapus",
     })
-    .status(200);
+    .status(404);
 };
-deleteWishlistById();

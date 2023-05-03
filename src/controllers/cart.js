@@ -42,7 +42,7 @@ export const addCart = async (req, res) => {
   Users.updateOne(
     { "cart.cart_id": cart.cart_id },
     {
-      $set: { cart },
+      $set: cart,
     },
   );
   res
@@ -82,14 +82,15 @@ export const getCartById = async (req, res) => {
 
   // validator if data exist or not
   if (data == null) {
-    return res
+    res
       .json({
         status: false,
         message: "data tidak ditemukan!",
       })
       .status(404);
+    return;
   }
-  return res
+  res
     .json({
       status: true,
       message: "data ditemukan",
@@ -107,14 +108,15 @@ export const deleteCartById = async (req, res) => {
   });
 
   if (deleteCart) {
-    return res
+    res
       .json({
         status: true,
         message: "data cart berhasil dihapus",
       })
       .status(200);
+    return;
   }
-  return res
+  res
     .json({
       status: false,
       message: "data cart gagal dihapus",
