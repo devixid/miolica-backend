@@ -3,10 +3,10 @@ import mongoose from "mongoose";
 // fetch id from handler login getUser
 import { login } from "./auth";
 
-const userId = login().getUser().data.users_id;
+const userId = login().data.users_id;
 
 // handler method post dan put pada cart
-export const addCart = (req, res) => {
+export const addCart = async (req, res) => {
   // take data from req body
   const { product_id, quantity, totalPrice } = req.body;
 
@@ -19,46 +19,47 @@ export const addCart = (req, res) => {
     },
   ];
 
-  // validator if cart exist or not
-  const findCart = Users.find({
-    cart,
-  });
+  const findCart = await Users.findOne({ "cart.cart_id": cart.cart_id });
 
-  // validator update and add cart by cart_id
-  if (!findCart) {
-    Users.insertOne({
-      cart,
-    });
+  // logic to add cart
+  if (findCart == null) {
+    Users.updateOne(
+      { users_id: userId },
+      {
+        $set: cart,
+      },
+    );
     res
       .json({
         status: true,
-        message: "cart berhasil ditambahkan!",
-        data: Users,
+        message: "cart berhasil ditambahkan",
       })
       .status(200);
-  } else {
-    Users.updateOne({
-      cart,
-    });
-    res
-      .json({
-        status: true,
-        message: `cart dengan id ${cart.cart_id} berhasil diperbarui`,
-      })
-      .status(200);
+    return;
   }
-  return cart;
+
+  // logic to update cart
+  Users.updateOne(
+    { "cart.cart_id": cart.cart_id },
+    {
+      $set: { cart },
+    },
+  );
+  res
+    .json({
+      status: true,
+      message: "cart berhasil diperbarui",
+      data: findCart,
+    })
+    .status(200);
 };
-addCart();
 
 // handler method get pada cart
-const getCartById = async (req, res) => {
+export const getCartById = async (req, res) => {
   // query to get data cart from collection
   const data = await Users.findOne(
     {
-      users_id: {
-        $eq: userId,
-      },
+      users_id: userId,
     },
     {
       username: 0,
@@ -80,7 +81,7 @@ const getCartById = async (req, res) => {
   );
 
   // validator if data exist or not
-  if (!data) {
+  if (data == null) {
     return res
       .json({
         status: false,
@@ -96,29 +97,27 @@ const getCartById = async (req, res) => {
     })
     .status(200);
 };
-getCartById();
 
 // handler method get pada cart
-const deleteCartById = (req, res) => {
+export const deleteCartById = async (req, res) => {
   const { cart_id } = req.body;
   // search data from collection based on cart_id
-  const deleteCart = Users.deleteOne({
+  const deleteCart = await Users.deleteOne({
     cart: { $elemMatch: { cart_id } },
   });
 
-  if (!deleteCart) {
+  if (deleteCart) {
     return res
       .json({
-        status: false,
-        message: "data cart gagal dihapus",
+        status: true,
+        message: "data cart berhasil dihapus",
       })
-      .status(404);
+      .status(200);
   }
   return res
     .json({
-      status: true,
-      message: "data cart berhasil dihapus",
+      status: false,
+      message: "data cart gagal dihapus",
     })
-    .status(200);
+    .status(404);
 };
-deleteCartById();
