@@ -5,7 +5,7 @@ import { login } from "./auth";
 
 const userId = login().data.users_id;
 
-// handler method post dan put pada cart
+// handler method post put pada cart
 export const addCart = async (req, res) => {
   // take data from req body
   const { product_id, quantity, totalPrice } = req.body;
@@ -35,32 +35,48 @@ export const addCart = async (req, res) => {
         message: "cart berhasil ditambahkan",
       })
       .status(200);
-    return;
   }
+};
+
+// handler method put pada cart
+export const updateCart = async (req, res) => {
+  // take data from req body
+  const { product_id, quantity, totalPrice } = req.body;
+
+  const cart = [
+    {
+      product_id,
+      cart_id: new mongoose.Types.ObjectId(),
+      quantity,
+      totalPrice,
+    },
+  ];
+
+  const findCart = await Users.findOne({ "cart.cart_id": cart.cart_id });
 
   // logic to update cart
-  Users.updateOne(
-    { "cart.cart_id": cart.cart_id },
-    {
-      $set: cart,
-    },
-  );
-  res
-    .json({
-      status: true,
-      message: "cart berhasil diperbarui",
-      data: findCart,
-    })
-    .status(200);
+  if (findCart) {
+    Users.updateOne(
+      { "cart.cart_id": cart.cart_id },
+      {
+        $set: cart,
+      },
+    );
+    res
+      .json({
+        status: true,
+        message: "cart berhasil diperbarui",
+        data: findCart,
+      })
+      .status(200);
+  }
 };
 
 // handler method get pada cart
-export const getCartById = async (req, res) => {
+export const getCart = async (req, res) => {
   // query to get data cart from collection
   const data = await Users.findOne(
-    {
-      users_id: userId,
-    },
+    {},
     {
       username: 0,
       email: 0,
@@ -103,9 +119,12 @@ export const getCartById = async (req, res) => {
 export const deleteCartById = async (req, res) => {
   const { cart_id } = req.body;
   // search data from collection based on cart_id
-  const deleteCart = await Users.deleteOne({
-    cart: { $elemMatch: { cart_id } },
-  });
+  const deleteCart = await Users.updateOne(
+    {
+      cart: { $elemMatch: { cart_id } },
+    },
+    { $unset: { cart: "" } },
+  );
 
   if (deleteCart) {
     res

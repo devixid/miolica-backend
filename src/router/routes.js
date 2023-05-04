@@ -1,8 +1,14 @@
 import { Router } from "express";
-import { addCart, getCartById, deleteCartById } from "@/controllers/cart";
+import {
+  addCart,
+  updateCart,
+  getCart,
+  deleteCartById,
+} from "@/controllers/cart";
 import {
   addWishlist,
-  getWishlistById,
+  updateWishlist,
+  getWishlist,
   deleteWishlistById,
 } from "@/controllers/wishlist";
 import { signup, login, updatePassword } from "../controllers/auth";
@@ -10,22 +16,22 @@ import { signup, login, updatePassword } from "../controllers/auth";
 const routes = Router();
 
 // register & login page
-routes.route("/users/auth").get(login).post(signup).put(updatePassword);
+routes.route("/users/auth").get(login).post(signup).patch(updatePassword);
 
 // cart page
 routes
   .route("/users/profile/cart")
-  .get(getCartById)
+  .get(getCart)
   .post(addCart)
-  .put(addCart)
+  .put(updateCart)
   .delete(deleteCartById);
 
 // wishlist page
 routes
   .route("/users/profile/wishlist")
-  .get(getWishlistById)
+  .get(getWishlist)
   .post(addWishlist)
-  .put(addWishlist)
+  .put(updateWishlist)
   .delete(deleteWishlistById);
 
 export { routes };

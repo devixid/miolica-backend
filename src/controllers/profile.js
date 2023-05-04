@@ -2,82 +2,78 @@ import { Users } from "@/models";
 // fetch id from handler login getUser
 import { login } from "./auth";
 
-const userId = login().getUser().data.users_id;
+const userId = login().data.users_id;
 
 // handler method get pada profile
-const getProfileByUsername = async (req, res) => {
-  const { username } = req.body;
-
+export const getProfileByUsername = async (req, res) => {
   // query to get data profile from collection
   const data = await Users.findOne(
     {
-      username: {
-        $eq: username,
-      },
+      users_id: userId,
     },
     { cart: 0, wishlist: 0 },
   );
 
   // validator if data exist or not
-  if (!data) {
-    return res
+  if (data == null) {
+    res
       .json({
         status: false,
-        message: "data tidak ditemukan!",
+        message: "profile tidak ditemukan!",
       })
       .status(404);
+    return;
   }
-  return res
+  res
     .json({
       status: true,
-      message: "data ditemukan",
+      message: "profile ditemukan",
       data,
     })
     .status(200);
 };
-getProfileByUsername();
 
 // handler untuk update profile
-const updateProfileById = (req, res) => {
-  const {
-    username,
-    email,
-    name,
-    address,
-    wishlist,
-    cart,
-    photoProfile,
-    saldo,
-  } = req.body;
+export const updateProfileById = async (req, res) => {
+  const { username, email, name, address, photoProfile, saldo } = req.body;
+
+  // validate if profile exist or not
+  const findProfile = await Users.findOne({
+    users_id: userId,
+  });
 
   // validator update password by id
-  if (userId) {
-    Users.updateOne({
-      $set: {
-        username,
-        email,
-        name,
-        address,
-        wishlist,
-        cart,
-        photoProfile,
-        saldo,
+  if (findProfile) {
+    Users.updateOne(
+      { users_id: userId },
+      {
+        $set: {
+          username,
+          email,
+          name,
+          address,
+          photoProfile,
+          saldo,
+        },
       },
-    });
+    );
+    const updatedProfile = await Users.findOne(
+      { users_id: userId },
+      { cart: 0, wishlist: 0 },
+    );
     res
       .json({
         status: true,
-        message: `user dengan id ${userId} berhasil diperbarui`,
-        data: Users,
+        message: "profile berhasil diperbarui",
+        data: updatedProfile,
       })
       .status(200);
-  } else {
-    res
-      .json({
-        status: false,
-        message: `user dengan id ${userId} tidak ditemukan`,
-      })
-      .status(404);
+    return;
   }
+  res
+    .json({
+      status: false,
+      message: "profile tidak ditemukan",
+    })
+    .status(404);
 };
-updateProfileById();

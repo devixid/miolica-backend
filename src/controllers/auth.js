@@ -74,7 +74,7 @@ export const updatePassword = async (req, res) => {
     const findEmail = await Users.findOne({ email });
     if (findEmail) {
       await Users.updateOne(
-        { email: { $eq: email } },
+        { email },
         {
           $set: {
             password,
@@ -105,7 +105,7 @@ export const updatePassword = async (req, res) => {
     const findUsername = await Users.findOne({ username });
     if (findUsername) {
       await Users.updateOne(
-        {},
+        { username },
         {
           $set: {
             password,
