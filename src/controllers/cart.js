@@ -3,7 +3,7 @@ import mongoose from "mongoose";
 // fetch id from handler login getUser
 import { login } from "./auth";
 
-const userId = login().data.users_id;
+const userId = login.data.users_id;
 
 // handler method post put pada cart
 export const addCart = async (req, res) => {
@@ -23,7 +23,7 @@ export const addCart = async (req, res) => {
 
   // logic to add cart
   if (findCart == null) {
-    Users.updateOne(
+    await Users.updateOne(
       { users_id: userId },
       {
         $set: cart,

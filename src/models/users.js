@@ -1,4 +1,5 @@
 import mongoose from "mongoose";
+import isEmail from "validator/lib/isEmail";
 
 const { Schema } = mongoose;
 
@@ -14,31 +15,33 @@ export const usersSchema = new Schema({
   },
   username: {
     type: String,
-    required: true,
-    minLength: 3,
-    maxLength: 20,
+    required: [true, "Username required, please input a username"],
+    minLength: [3, "Username cannot be less than 3 characters"],
+    maxLength: [20, "Username cannot be longer than 20 characters"],
   },
   email: {
     type: String,
-    required: true,
-    maxLength: 50,
+    required: [true, "Email required, please input a email"],
+    maxLength: [30, "Email cannot be longer than 30 characters"],
+    unique: true,
+    validate: [isEmail, "Email not valid, please enter a valid email"],
   },
   password: {
     type: String,
-    required: true,
-    minLength: 8,
-    maxLength: 20,
+    required: [true, "Password required, please input a password"],
+    minLength: [8, "Password cannot be less than 8 characters"],
+    maxLength: [20, "Password cannot be longer than 20 characters"],
   },
   name: {
     type: String,
-    required: true,
-    minLength: 3,
-    maxLength: 20,
+    required: [true, "Name required, please input a name"],
+    minLength: [3, "Name cannot be less than 3 characters"],
+    maxLength: [20, "Name cannot be longer than 20 characters"],
   },
   address: {
     type: String,
-    required: true,
-    maxLength: 50,
+    required: [true, "Address required, please input a address"],
+    maxLength: [20, "Address cannot be longer than 50 characters"],
   },
   wishlist: [
     {
@@ -76,13 +79,14 @@ export const usersSchema = new Schema({
       },
       quantity: {
         type: Number,
-        required: true,
-        max: 3,
+        required: [true, "Please input the product quantity"],
+        max: [3, "quantity exceeds the maximum limit"],
+        default: 0,
       },
       totalPrice: {
         type: Number,
         required: true,
-        max: 9,
+        max: [9, "the total price exceeds the maximum transaction limit"],
       },
     },
   ],
@@ -90,6 +94,6 @@ export const usersSchema = new Schema({
   saldo: {
     type: Number,
     min: 1,
-    max: 15,
+    max: [15, "the balance is already maximum, it can't be more than this"],
   },
 });

@@ -24,8 +24,8 @@ export const sellerSchema = new Schema({
   },
   storeName: {
     type: String,
-    required: true,
-    minLength: 3,
-    maxLength: 20,
+    required: [true, "storeName required, please input a storeName"],
+    minLength: [3, "storeName cannot be less than 3 characters"],
+    maxLength: [20, "storeName cannot be longer than 20 characters"],
   },
 });

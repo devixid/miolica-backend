@@ -23,7 +23,7 @@ export const checkoutSchema = new Schema({
   },
   location: {
     type: String,
-    required: true,
+    required: [true, "location required, please input location"],
   },
   shippingPrice: {
     type: Schema.Types.ObjectId,
