@@ -5,7 +5,7 @@
   "license": "MIT",
   "main": "server.js",
   "scripts": {
-    "dev": "nodemon --exec babel-node server.js",
+    "dev": "nodemon --exec babel-node --trace-warnings server.js",
     "lint": "eslint \"**/*.{js,jsx,ts,tsx,md,mdx}\" --fix",
     "lint:fix": "eslint --fix \"**/*.{js,jsx,ts,tsx,md,mdx}\"",
     "format": "prettier --config .prettierrc.json --write \"**/*.{js,jsx,ts,tsx,md,mdx}\"",

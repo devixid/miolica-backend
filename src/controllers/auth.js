@@ -1,8 +1,34 @@
 import { Users } from "@/models";
 import mongoose from "mongoose";
 
+const authCustomError = (err) => {
+  console.log(err.message, err.code);
+  const errors = {
+    username: "",
+    email: "",
+    password: "",
+    name: "",
+    address: "",
+  };
+
+  // duplicate error message
+  if (err.code === 11000) {
+    errors.email =
+      "This email has already been registered, please use another email";
+    return errors;
+  }
+
+  // validation error message
+  if (err.message.includes("Users validation failed")) {
+    Object.values(err.errors).forEach(({ properties }) => {
+      errors[properties.path] = properties.message;
+    });
+  }
+  return errors;
+};
+
 // handler user signup method post
-export const signup = (req, res) => {
+export const signup = async (req, res) => {
   // take data from req body
   const { username, email, password, name, address } = req.body;
 
@@ -17,17 +43,15 @@ export const signup = (req, res) => {
   });
 
   // saving docs into collection
-  const save = () => {
-    signUpDocs.save();
-  };
-  save();
-
-  // validator
-  if (!save()) {
+  try {
+    await signUpDocs.save();
+  } catch (err) {
+    const errors = authCustomError(err);
     res
       .json({
         status: false,
         message: "data gagal diinput",
+        reason: errors,
       })
       .status(400);
     return;
@@ -73,14 +97,27 @@ export const updatePassword = async (req, res) => {
   if (email) {
     const findEmail = await Users.findOne({ email });
     if (findEmail) {
-      await Users.updateOne(
-        { email },
-        {
-          $set: {
-            password,
+      try {
+        await Users.updateOne(
+          { email },
+          {
+            $set: {
+              password,
+            },
           },
-        },
-      );
+        );
+      } catch (err) {
+        const errors = authCustomError(err);
+        res
+          .json({
+            status: false,
+            message: "password gagal diperbarui",
+            reason: errors,
+          })
+          .status(400);
+        return;
+      }
+
       const updatedUser = await Users.findOne({ email });
       res
         .json({
@@ -104,14 +141,27 @@ export const updatePassword = async (req, res) => {
   if (username) {
     const findUsername = await Users.findOne({ username });
     if (findUsername) {
-      await Users.updateOne(
-        { username },
-        {
-          $set: {
-            password,
+      try {
+        await Users.updateOne(
+          { username },
+          {
+            $set: {
+              password,
+            },
           },
-        },
-      );
+        );
+      } catch (err) {
+        const errors = authCustomError(err);
+        res
+          .json({
+            status: false,
+            message: "password gagal diperbarui",
+            reason: errors,
+          })
+          .status(400);
+        return;
+      }
+
       const updatedUser = await Users.findOne({ username });
       res
         .json({
