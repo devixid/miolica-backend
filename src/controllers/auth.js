@@ -46,6 +46,7 @@ export const signup = async (req, res) => {
   try {
     await signUpDocs.save();
   } catch (err) {
+    // validate if data not right
     const errors = authCustomError(err);
     res
       .json({
@@ -97,15 +98,14 @@ export const updatePassword = async (req, res) => {
   if (email) {
     const findEmail = await Users.findOne({ email });
     if (findEmail) {
+      const filter = { email };
+      const update = {
+        $set: {
+          password,
+        },
+      };
       try {
-        await Users.updateOne(
-          { email },
-          {
-            $set: {
-              password,
-            },
-          },
-        );
+        await Users.findOneAndUpdate(filter, update);
       } catch (err) {
         const errors = authCustomError(err);
         res
@@ -141,15 +141,14 @@ export const updatePassword = async (req, res) => {
   if (username) {
     const findUsername = await Users.findOne({ username });
     if (findUsername) {
+      const filter = { username };
+      const update = {
+        $set: {
+          password,
+        },
+      };
       try {
-        await Users.updateOne(
-          { username },
-          {
-            $set: {
-              password,
-            },
-          },
-        );
+        await Users.findOneAndUpdate(filter, update);
       } catch (err) {
         const errors = authCustomError(err);
         res

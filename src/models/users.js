@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import isEmail from "validator/lib/isEmail";
+import { genSalt, hash } from "bcrypt";
 
 const { Schema } = mongoose;
 
@@ -96,4 +97,18 @@ export const usersSchema = new Schema({
     min: 1,
     max: [15, "the balance is already maximum, it can't be more than this"],
   },
+});
+
+// middleware before docs saved and update into db
+usersSchema.pre("save", async function middleware(next) {
+  const salt = await genSalt();
+  this.password = await hash(this.password, salt);
+  next();
+});
+
+usersSchema.pre("findOneAndUpdate", async function middleware(next) {
+  const salt = await genSalt();
+  const hashedPassword = await hash(this.getUpdate().$set.password, salt);
+  this.getUpdate().$set.password = hashedPassword;
+  next();
 });
