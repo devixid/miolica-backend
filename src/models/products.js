@@ -6,14 +6,6 @@ export const productSchema = new Schema({
     type: mongoose.ObjectId,
     default: new mongoose.Types.ObjectId(),
   },
-  seller_id: {
-    type: Schema.Types.ObjectId,
-    ref: "Sellers",
-  },
-  category_id: {
-    type: Schema.Types.ObjectId,
-    ref: "Categorys",
-  },
   productName: {
     type: String,
     required: [true, "product name required, please input a product name"],
@@ -32,8 +24,8 @@ export const productSchema = new Schema({
     type: Number,
     required: [true, "price required, please input price"],
     default: 0,
-    min: 1,
-    max: [9, "price exceeds the maximum transaction limit"],
+    min: 0,
+    max: [100000000, "price exceeds the maximum transaction limit"],
   },
   address: {
     type: String,
@@ -52,8 +44,9 @@ export const productSchema = new Schema({
   quantityProduct: {
     type: Number,
     default: 0,
-    min: 1,
-    max: [9, "quantity exceeds the maximum limit"],
+    required: [true, "quantityProduct required, please input quantityProduct"],
+    min: [1, "sorry, input atleast 1 quantity product"],
+    max: [100, "quantity exceeds the maximum limit"],
   },
   storeName: {
     type: Schema.Types.ObjectId,

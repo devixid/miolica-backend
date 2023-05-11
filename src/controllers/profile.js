@@ -42,7 +42,7 @@ export const updateProfileById = async (req, res) => {
     users_id: userId,
   });
 
-  // validator update password by id
+  // validator update profile by id
   if (findProfile) {
     Users.updateOne(
       { users_id: userId },

@@ -11,6 +11,13 @@ import {
   getWishlist,
   deleteWishlistById,
 } from "@/controllers/wishlist";
+import {
+  addProduct,
+  getAllProducts,
+  getProductByName,
+  getProductByCategories,
+  updateProduct,
+} from "@/controllers/products";
 import { signup, login, updatePassword } from "../controllers/auth";
 
 const routes = Router();
@@ -33,5 +40,13 @@ routes
   .post(addWishlist)
   .put(updateWishlist)
   .delete(deleteWishlistById);
+
+routes
+  .route("/products")
+  .get(getAllProducts)
+  .get(getProductByCategories)
+  .get(getProductByName)
+  .post(addProduct)
+  .put(updateProduct);
 
 export { routes };
