@@ -1,9 +1,9 @@
 import { Users } from "@/models";
 import mongoose from "mongoose";
 // fetch id from handler login getUser
-import { login } from "./auth";
+import { signup } from "./auth";
 
-const userId = login.data.users_id;
+const userId = signup.users_id;
 
 // handler method post put pada cart
 export const addCart = async (req, res) => {

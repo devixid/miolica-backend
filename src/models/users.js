@@ -10,10 +10,6 @@ export const usersSchema = new Schema({
     type: mongoose.ObjectId,
     default: new mongoose.Types.ObjectId(),
   },
-  product_id: {
-    type: Schema.Types.ObjectId,
-    ref: "Products",
-  },
   username: {
     type: String,
     required: [true, "Username required, please input a username"],

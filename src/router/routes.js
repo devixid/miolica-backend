@@ -43,8 +43,8 @@ routes
 
 routes
   .route("/products")
-  .get(getAllProducts)
-  .get(getProductByCategories)
+  //.get(getAllProducts)
+  //.get(getProductByCategories)
   .get(getProductByName)
   .post(addProduct)
   .put(updateProduct);

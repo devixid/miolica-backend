@@ -1,0 +1,20 @@
+product testing
+{
+    "productName": "cilok kuah",
+    "descriptionProduct": "makanan ini enak",
+    "photoProduct": "cilok.jpg",
+    "unitPrice": 10.000,
+    "address": "jawa tengah, indonesia",
+    "location": "jawa",
+    "category": "makanan",
+    "quantityProduct": "10"
+}
+
+auth testing
+{
+    "username": "unit1",
+    "email": "unit1@gmail.com",
+    "password": "unitTest1",
+    "name": "unitTest1",
+    "address": "unit1"
+}

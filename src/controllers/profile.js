@@ -1,8 +1,8 @@
 import { Users } from "@/models";
 // fetch id from handler login getUser
-import { login } from "./auth";
+import { signup } from "./auth";
 
-const userId = login().data.users_id;
+const userId = signup.users_id;
 
 // handler method get pada profile
 export const getProfileByUsername = async (req, res) => {

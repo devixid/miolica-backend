@@ -35,7 +35,7 @@ export const addProduct = async (req, res) => {
     unitPrice,
     address,
     location,
-    Category,
+    category,
     quantityProduct,
     storeName, // idk storeName logic(this logic not right yet)
   } = req.body;
@@ -49,7 +49,7 @@ export const addProduct = async (req, res) => {
     unitPrice,
     address,
     location,
-    Category,
+    category,
     quantityProduct,
     storeName, // idk storeName logic(this logic not right yet)
   });
@@ -108,58 +108,61 @@ export const getProductByName = async (req, res) => {
   // query to get data products from collection
   const data = await Products.find({
     productName: {
-      $regex: /productName/,
-      $options: "i",
+      $regex: new RegExp(productName, "i"),
     },
   });
 
+  console.log(`Ditemukan ${data.length} produk dengan nama ${productName}.`); // Menambahkan log
+
   // validator if data exist or not
-  if (data == null) {
+  if (data.length > 0 && productName) {
+    res
+      .json({
+        status: true,
+        message: `products dengan nama ${productName} ditemukan`,
+        data,
+      })
+      .status(200);
+  } else if (productName) {
     res
       .json({
         status: false,
         message: `products dengan nama ${productName} tidak ditemukan!`,
       })
       .status(404);
-    return;
   }
-  res
-    .json({
-      status: true,
-      message: `products dengan nama ${productName} ditemukan`,
-      data,
-    })
-    .status(200);
 };
 
 // handler get by categries pada products
 export const getProductByCategories = async (req, res) => {
-  const { Category } = req.body;
+  const { category } = req.body;
+
+  console.log(`Mencari produk dengan kategori ${category}...`); // Menambahkan log
 
   // query to get data products from collection
   const data = await Products.find({
-    Category: {
-      $eq: Category,
-    },
+    category,
   });
 
+  console.log(`Ditemukan ${data.length} produk dengan kategori ${category}.`); // Menambahkan log
+
   // validator if data exist or not
-  if (data == null) {
+  if (data.length > 0 && category) {
+    res
+      .json({
+        status: true,
+        message: `products dengan categories ${category} ditemukan`,
+        data,
+      })
+      .status(200);
+  } else if (category) {
     res
       .json({
         status: false,
-        message: `products dengan categories ${Category} tidak ditemukan!`,
+        message: `products dengan categories ${category} tidak ditemukan!`,
       })
       .status(404);
-    return;
   }
-  res
-    .json({
-      status: true,
-      message: `products dengan categories ${Category} ditemukan`,
-      data,
-    })
-    .status(200);
 };
 
 // handler method put pada product

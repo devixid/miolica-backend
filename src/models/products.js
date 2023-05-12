@@ -23,7 +23,6 @@ export const productSchema = new Schema({
   unitPrice: {
     type: Number,
     required: [true, "price required, please input price"],
-    default: 0,
     min: 0,
     max: [100000000, "price exceeds the maximum transaction limit"],
   },
@@ -38,6 +37,7 @@ export const productSchema = new Schema({
   },
   category: {
     type: String,
+    required: [true, "category required, please input category product"],
     minLength: [3, "Category name cannot be less than 3 characters"],
     maxLength: [15, "category name cannot be longer than 50 characters"],
   },
@@ -48,8 +48,8 @@ export const productSchema = new Schema({
     min: [1, "sorry, input atleast 1 quantity product"],
     max: [100, "quantity exceeds the maximum limit"],
   },
-  storeName: {
+  /* storeName: {
     type: Schema.Types.ObjectId,
     ref: "Sellers",
-  },
+  }, */
 });

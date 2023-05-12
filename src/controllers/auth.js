@@ -1,6 +1,8 @@
 import { Users } from "@/models";
 import mongoose from "mongoose";
+import { sign } from "jsonwebtoken";
 
+// handler when user sending incorrect data
 const authCustomError = (err) => {
   console.log(err.message, err.code);
   const errors = {
@@ -27,6 +29,12 @@ const authCustomError = (err) => {
   return errors;
 };
 
+// jwt cookie
+const maxAge = 3 * 24 * 60 * 60;
+const createToken = (userId) => {
+  return sign({ userId }, "devix token secret", { expiresIn: maxAge });
+};
+
 // handler user signup method post
 export const signup = async (req, res) => {
   // take data from req body
@@ -45,24 +53,26 @@ export const signup = async (req, res) => {
   // saving docs into collection
   try {
     await signUpDocs.save();
+    const token = createToken(signUpDocs.users_id);
+    console.log(signUpDocs.users_id);
+    res
+      .status(200)
+      .cookie("jwt", token, { htpOnly: true, maxAge: maxAge * 1000 })
+      .json({
+        status: true,
+        message: "data berhasil diinput",
+        data: signUpDocs,
+      });
+    return;
   } catch (err) {
     // validate if data not right
     const errors = authCustomError(err);
-    res
-      .json({
-        status: false,
-        message: "data gagal diinput",
-        reason: errors,
-      })
-      .status(400);
-    return;
+    res.status(400).json({
+      status: false,
+      message: "data gagal diinput",
+      reason: errors,
+    });
   }
-  res
-    .json({
-      status: true,
-      message: "data berhasil diinput",
-    })
-    .status(200);
 };
 
 // handler user login method get
