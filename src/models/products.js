@@ -48,8 +48,8 @@ export const productSchema = new Schema({
     min: [1, "sorry, input atleast 1 quantity product"],
     max: [100, "quantity exceeds the maximum limit"],
   },
-  /* storeName: {
+  storeName: {
     type: Schema.Types.ObjectId,
     ref: "Sellers",
-  }, */
+  },
 });

@@ -14,9 +14,10 @@ import {
 import {
   addProduct,
   getAllProducts,
-  getProductByName,
+  getProductById,
   getProductByCategories,
-  updateProduct,
+  updateProductById,
+  deleteProductById,
 } from "@/controllers/products";
 import { signup, login, updatePassword } from "../controllers/auth";
 
@@ -41,12 +42,13 @@ routes
   .put(updateWishlist)
   .delete(deleteWishlistById);
 
+// product page
+routes.route("/products").get(getAllProducts).post(addProduct);
+routes.route("/product/:categories").get(getProductByCategories);
 routes
-  .route("/products")
-  //.get(getAllProducts)
-  //.get(getProductByCategories)
-  .get(getProductByName)
-  .post(addProduct)
-  .put(updateProduct);
+  .route("/product/:id")
+  .get(getProductById)
+  .put(updateProductById)
+  .delete(deleteProductById);
 
 export { routes };

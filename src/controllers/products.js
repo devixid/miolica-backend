@@ -74,13 +74,17 @@ export const addProduct = async (req, res) => {
       status: true,
       message: "data berhasil diinput",
     })
-    .status(200);
+    .status(201);
 };
 
 // handler method get all pada products
 export const getAllProducts = async (req, res) => {
   // query to get all products from collection
-  const data = await Products.find().populate("Sellers", "storeName");
+  const data = await Products.find().populate({
+    path: "Sellers",
+    select: "storeName",
+    strictPopulate: false,
+  });
 
   // validator if data exist or not
   if (data == null) {
@@ -102,52 +106,43 @@ export const getAllProducts = async (req, res) => {
 };
 
 // handler get by name pada products
-export const getProductByName = async (req, res) => {
-  const { productName } = req.body;
+export const getProductById = async (req, res) => {
+  const { id } = req.params.id;
 
   // query to get data products from collection
-  const data = await Products.find({
-    productName: {
-      $regex: new RegExp(productName, "i"),
-    },
+  const data = await Products.findOne({
+    product_id: id,
   });
 
-  console.log(`Ditemukan ${data.length} produk dengan nama ${productName}.`); // Menambahkan log
-
   // validator if data exist or not
-  if (data.length > 0 && productName) {
+  if (data) {
     res
       .json({
         status: true,
-        message: `products dengan nama ${productName} ditemukan`,
+        message: `products dengan id ${id} ditemukan`,
         data,
       })
       .status(200);
-  } else if (productName) {
-    res
-      .json({
-        status: false,
-        message: `products dengan nama ${productName} tidak ditemukan!`,
-      })
-      .status(404);
   }
+  res
+    .json({
+      status: false,
+      message: `products dengan id ${id} tidak ditemukan!`,
+    })
+    .status(404);
 };
 
 // handler get by categries pada products
 export const getProductByCategories = async (req, res) => {
-  const { category } = req.body;
-
-  console.log(`Mencari produk dengan kategori ${category}...`); // Menambahkan log
+  const { category } = req.params.category;
 
   // query to get data products from collection
   const data = await Products.find({
     category,
   });
 
-  console.log(`Ditemukan ${data.length} produk dengan kategori ${category}.`); // Menambahkan log
-
   // validator if data exist or not
-  if (data.length > 0 && category) {
+  if (data) {
     res
       .json({
         status: true,
@@ -155,18 +150,17 @@ export const getProductByCategories = async (req, res) => {
         data,
       })
       .status(200);
-  } else if (category) {
-    res
-      .json({
-        status: false,
-        message: `products dengan categories ${category} tidak ditemukan!`,
-      })
-      .status(404);
   }
+  res
+    .json({
+      status: false,
+      message: `products dengan categories ${category} tidak ditemukan!`,
+    })
+    .status(404);
 };
 
 // handler method put pada product
-export const updateProduct = async (req, res) => {
+export const updateProductById = async (req, res) => {
   const {
     product_id,
     productName,
@@ -232,4 +226,31 @@ export const updateProduct = async (req, res) => {
       message: "product tidak ditemukan",
     })
     .status(404);
+};
+
+// handler method delete by id pada products
+export const deleteProductById = async (req, res) => {
+  const { id } = req.params.id;
+
+  // validate if data exist or not
+  const data = await Products.findOne({
+    product_id: id,
+  });
+
+  if (data) {
+    const deleteProduct = await Products.deleteOne({
+      product_id: id,
+    });
+
+    res.status(204).json({
+      status: true,
+      message: `product with id ${id} successfully deleted`,
+      data: deleteProduct,
+    });
+    return;
+  }
+  res.status(404).json({
+    status: false,
+    message: `product with id ${id} not found!`,
+  });
 };

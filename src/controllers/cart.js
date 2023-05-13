@@ -115,7 +115,7 @@ export const getCart = async (req, res) => {
     .status(200);
 };
 
-// handler method get pada cart
+// handler method delete pada cart
 export const deleteCartById = async (req, res) => {
   const { cart_id } = req.body;
   // search data from collection based on cart_id
