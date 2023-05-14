@@ -1,11 +1,11 @@
 import mongoose from "mongoose";
 import isEmail from "validator/lib/isEmail";
-import { genSalt, hash } from "bcrypt";
+import bcript from "bcrypt";
 
 const { Schema } = mongoose;
 
 // schema untuk validasi data users
-export const usersSchema = new Schema({
+const usersSchema = new Schema({
   users_id: {
     type: mongoose.ObjectId,
     default: new mongoose.Types.ObjectId(),
@@ -95,16 +95,36 @@ export const usersSchema = new Schema({
   },
 });
 
+export const Users = mongoose.model("Users", usersSchema);
+
 // middleware before docs saved and update into db
 usersSchema.pre("save", async function middleware(next) {
-  const salt = await genSalt();
-  this.password = await hash(this.password, salt);
+  const salt = await bcript.genSalt();
+  this.password = await bcript.hash(this.password, salt);
   next();
 });
 
 usersSchema.pre("findOneAndUpdate", async function middleware(next) {
-  const salt = await genSalt();
-  const hashedPassword = await hash(this.getUpdate().$set.password, salt);
+  const salt = await bcript.genSalt();
+  const hashedPassword = await bcript.hash(
+    this.getUpdate().$set.password,
+    salt,
+  );
   this.getUpdate().$set.password = hashedPassword;
   next();
 });
+
+// statics method so now Users collection has a method
+usersSchema.statics.userLogin = async (email, password) => {
+  const user = await Users.findOne({ email });
+
+  if (user) {
+    const authPassword = await bcript.compare(password, user.password); // password matching process
+
+    if (authPassword) {
+      return user; // return data user if password correct
+    }
+    throw Error("Password incorrect"); // error message if email incorrect
+  }
+  throw Error("Email incorrect"); // error message if email incorrect
+};

@@ -1,4 +1,4 @@
-import { Users } from "@/models";
+import { Users } from "@/models/users";
 import mongoose from "mongoose";
 import { sign } from "jsonwebtoken";
 
@@ -12,6 +12,16 @@ const authCustomError = (err) => {
     name: "",
     address: "",
   };
+
+  // email error
+  if (err.message === "Email incorrect") {
+    errors.email = "Email not registered";
+  }
+
+  // password error
+  if (err.message === "Password incorrect") {
+    errors.password = "incorrect password";
+  }
 
   // duplicate error message
   if (err.code === 11000) {
@@ -54,7 +64,6 @@ export const signup = async (req, res) => {
   try {
     await signUpDocs.save();
     const token = createToken(signUpDocs.users_id);
-    console.log(signUpDocs.users_id);
     res
       .status(200)
       .cookie("jwt", token, { htpOnly: true, maxAge: maxAge * 1000 })
@@ -67,6 +76,7 @@ export const signup = async (req, res) => {
   } catch (err) {
     // validate if data not right
     const errors = authCustomError(err);
+
     res.status(400).json({
       status: false,
       message: "data gagal diinput",
@@ -77,27 +87,29 @@ export const signup = async (req, res) => {
 
 // handler user login method get
 export const login = async (req, res) => {
-  const { email, username, password } = req.body;
+  const { email, password } = req.body;
 
-  // query to get data user from collection
-  const data = await Users.findOne({
-    $or: [{ username }, { email }],
-    password,
-  });
-
-  // validator if data exist or not
-  if (data) {
-    res.status(200).json({
-      status: true,
-      message: "data ditemukan",
-      data,
-    });
+  try {
+    const user = await Users.userLogin(email, password);
+    const token = createToken(user.users_id);
+    res
+      .status(200)
+      .cookie("jwt", token, { htpOnly: true, maxAge: maxAge * 1000 })
+      .json({
+        status: true,
+        message: "Login berhasil",
+        data: user,
+      });
     return;
+  } catch (err) {
+    const errors = authCustomError(err);
+
+    res.status(400).json({
+      status: false,
+      message: "Login belum berhasil",
+      reason: errors,
+    });
   }
-  res.status(404).json({
-    status: false,
-    message: "data tidak ditemukan!",
-  });
 };
 
 // handler update password user method put

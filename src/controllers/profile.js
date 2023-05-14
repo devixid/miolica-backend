@@ -1,4 +1,4 @@
-import { Users } from "@/models";
+import { Users } from "@/models/users";
 // fetch id from handler login getUser
 import { signup } from "./auth";
 

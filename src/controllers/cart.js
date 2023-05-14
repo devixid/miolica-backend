@@ -1,4 +1,4 @@
-import { Users } from "@/models";
+import { Users } from "@/models/users";
 import mongoose from "mongoose";
 // fetch id from handler login getUser
 import { signup } from "./auth";
