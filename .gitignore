@@ -1,6 +1,9 @@
 # Created by https://www.toptal.com/developers/gitignore/api/node,git,yarn,sublimetext,vim,visualstudiocode,macos,windows,linux,dotenv,vercel,remix+netlify,jetbrains
 # Edit at https://www.toptal.com/developers/gitignore?templates=node,git,yarn,sublimetext,vim,visualstudiocode,macos,windows,linux,dotenv,vercel,remix+netlify,jetbrains
 
+### workspace vscode ###
+miolica-backend.code-workspace
+
 ### dotenv ###
 .env
 

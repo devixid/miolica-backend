@@ -1,24 +1,19 @@
 import { Users } from "@/models/users";
 import mongoose from "mongoose";
 // fetch id from handler login getUser
-import { signup } from "./auth";
+import { login } from "./auth";
 
-const userId = signup.users_id;
+const userId = login.user.users_id;
 
 // handler method post pada cart
 export const addWishlist = async (req, res) => {
   // take data from req body
-  const { productName, descriptionProduct, photoProduct, unitPrice, category } =
-    req.body;
+  const { product_id } = req.body;
 
   const wishlist = [
     {
       wishlist_id: new mongoose.Types.ObjectId(),
-      productName,
-      descriptionProduct,
-      photoProduct,
-      unitPrice,
-      category,
+      product_id,
     },
   ];
 
@@ -29,20 +24,28 @@ export const addWishlist = async (req, res) => {
 
   // logic to add wishlist
   if (findWishlist == null) {
-    Users.updateOne(
-      {
-        users_id: userId,
-      },
-      {
-        $set: wishlist,
-      },
-    );
-    res
-      .json({
+    try {
+      await Users.updateOne(
+        { users_id: userId },
+        {
+          $set: wishlist,
+        },
+      );
+      // response success
+      res.status(200).json({
         status: true,
-        message: "wishlist berhasil ditambahkan!",
-      })
-      .status(200);
+        message: "wishlist berhasil ditambahkan",
+      });
+      return;
+    } catch (err) {
+      console.log(err);
+      // response server error
+      res.status(500).json({
+        status: false,
+        message: "wishlist gagal ditambahkan",
+        reason: err,
+      });
+    }
   }
 };
 
@@ -90,57 +93,51 @@ export const updateWishlist = async (req, res) => {
 // handler method get pada wishlist
 export const getWishlist = async (req, res) => {
   // query to get data wishlist from collection
-  const data = await Users.findOne({}).populate(
-    "Products",
-    "productName",
-    "descriptionProduct",
-    "photoProduct",
-    "unitPrice",
-  );
+  const wishlist = await Users.findOne({}).populate({
+    path: "product_id",
+    select: ["productName", "descriptionProduct", "photoProduct", "unitPrice"],
+    strictPopulate: false,
+  });
 
   // validator if data exist or not
-  if (data == null) {
-    res
-      .json({
-        status: false,
-        message: "data tidak ditemukan!",
-      })
-      .status(404);
+  if (wishlist == null) {
+    res.status(404).json({
+      status: false,
+      message: "user belum menambahkan wishlist apapun",
+    });
     return;
   }
-  res
-    .json({
-      status: true,
-      message: "data ditemukan",
-      data,
-    })
-    .status(200);
+  res.status(200).json({
+    status: true,
+    message: "wishlist ditemukan",
+    wishlist,
+  });
 };
 
 // handler method get pada cart
-export const deleteWishlistById = (req, res) => {
+export const deleteWishlistById = async (req, res) => {
   const { wishlist_id } = req.body;
   // search data from collection based on wishlist_id
-  const deleteWishlist = Users.updateOne(
-    {
-      wishlist: { $elemMatch: { wishlist_id } },
-    },
-    { $unset: { wishlist: "" } },
-  );
-
-  if (deleteWishlist) {
-    res
-      .json({
-        status: true,
-        message: "data wishlist berhasil dihapus",
-      })
-      .status(200);
+  try {
+    await Users.updateOne(
+      {
+        wishlist: { $elemMatch: { wishlist_id } },
+      },
+      { $unset: { wishlist: "" } },
+    );
+    // response success
+    res.status(200).json({
+      status: true,
+      message: "data wishlist berhasil dihapus",
+    });
     return;
-  }
-  res
-    .json({
+  } catch (err) {
+    console.log(err);
+    // response server error
+    res.status(500).json({
       status: false,
-      message: "data wishlist gagal dihapus",
-    })
-    .status(404);
+      message: "wishlist gagal dihapus",
+      reason: err,
+    });
+  }
 };

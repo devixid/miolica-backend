@@ -37,7 +37,7 @@ export const addProduct = async (req, res) => {
     location,
     category,
     quantityProduct,
-    storeName, // idk storeName logic(this logic not right yet)
+    storeName,
   } = req.body;
 
   // input data into docs
@@ -51,58 +51,50 @@ export const addProduct = async (req, res) => {
     location,
     category,
     quantityProduct,
-    storeName, // idk storeName logic(this logic not right yet)
+    storeName,
   });
 
   // saving docs into collection
   try {
     await addProductDocs.save();
+    res.status(200).json({
+      status: true,
+      message: "data berhasil diinput",
+    });
+    return;
   } catch (err) {
     // validate if data not right
     const errors = productCustomError(err);
-    res
-      .json({
-        status: false,
-        message: "data gagal diinput",
-        reason: errors,
-      })
-      .status(400);
-    return;
+    res.status(400).json({
+      status: false,
+      message: "data gagal diinput",
+      reason: errors,
+    });
   }
-  res
-    .json({
-      status: true,
-      message: "data berhasil diinput",
-    })
-    .status(201);
 };
 
 // handler method get all pada products
 export const getAllProducts = async (req, res) => {
   // query to get all products from collection
-  const data = await Products.find().populate({
-    path: "Sellers",
+  const product = await Products.find().populate({
+    path: "storeName",
     select: "storeName",
     strictPopulate: false,
   });
 
   // validator if data exist or not
-  if (data == null) {
-    res
-      .json({
-        status: false,
-        message: "data tidak ditemukan!",
-      })
-      .status(404);
+  if (product == null) {
+    res.status(404).json({
+      status: false,
+      message: "data tidak ditemukan!",
+    });
     return;
   }
-  res
-    .json({
-      status: true,
-      message: "data ditemukan",
-      data,
-    })
-    .status(200);
+  res.status(200).json({
+    status: true,
+    message: "data ditemukan",
+    product,
+  });
 };
 
 // handler get by name pada products
@@ -110,26 +102,27 @@ export const getProductById = async (req, res) => {
   const { id } = req.params.id;
 
   // query to get data products from collection
-  const data = await Products.findOne({
+  const product = await Products.findOne({
     product_id: id,
+  }).populate({
+    path: "storeName",
+    select: "storeName",
+    strictPopulate: false,
   });
 
   // validator if data exist or not
-  if (data) {
-    res
-      .json({
-        status: true,
-        message: `products dengan id ${id} ditemukan`,
-        data,
-      })
-      .status(200);
+  if (product) {
+    res.status(200).json({
+      status: true,
+      message: `products dengan id ${id} ditemukan`,
+      product,
+    });
+    return;
   }
-  res
-    .json({
-      status: false,
-      message: `products dengan id ${id} tidak ditemukan!`,
-    })
-    .status(404);
+  res.status(404).json({
+    status: false,
+    message: `products dengan id ${id} tidak ditemukan!`,
+  });
 };
 
 // handler get by categries pada products
@@ -137,26 +130,27 @@ export const getProductByCategories = async (req, res) => {
   const { category } = req.params.category;
 
   // query to get data products from collection
-  const data = await Products.find({
+  const product = await Products.find({
     category,
+  }).populate({
+    path: "storeName",
+    select: "storeName",
+    strictPopulate: false,
   });
 
   // validator if data exist or not
-  if (data) {
-    res
-      .json({
-        status: true,
-        message: `products dengan categories ${category} ditemukan`,
-        data,
-      })
-      .status(200);
+  if (product) {
+    res.status(200).json({
+      status: true,
+      message: `products dengan categories ${category} ditemukan`,
+      product,
+    });
+    return;
   }
-  res
-    .json({
-      status: false,
-      message: `products dengan categories ${category} tidak ditemukan!`,
-    })
-    .status(404);
+  res.status(404).json({
+    status: false,
+    message: `products dengan categories ${category} tidak ditemukan!`,
+  });
 };
 
 // handler method put pada product
@@ -171,7 +165,6 @@ export const updateProductById = async (req, res) => {
     location,
     Category,
     quantityProduct,
-    storeName, // idk storeName logic(this logic not right yet)
   } = req.body;
 
   // validate if product exist or not
@@ -192,7 +185,6 @@ export const updateProductById = async (req, res) => {
         location,
         Category,
         quantityProduct,
-        storeName,
       },
     };
 
@@ -200,32 +192,26 @@ export const updateProductById = async (req, res) => {
       await Products.findOneAndUpdate(filter, update);
     } catch (err) {
       const errors = productCustomError(err);
-      res
-        .json({
-          status: false,
-          message: "Product gagal diperbarui",
-          reason: errors,
-        })
-        .status(400);
+      res.status(400).json({
+        status: false,
+        message: "Product gagal diperbarui",
+        reason: errors,
+      });
       return;
     }
 
     const updatedProduct = await Products.findOne({ product_id });
-    res
-      .json({
-        status: true,
-        message: "product berhasil diperbarui",
-        data: updatedProduct,
-      })
-      .status(200);
+    res.status(200).json({
+      status: true,
+      message: "product berhasil diperbarui",
+      data: updatedProduct,
+    });
     return;
   }
-  res
-    .json({
-      status: false,
-      message: "product tidak ditemukan",
-    })
-    .status(404);
+  res.status(404).json({
+    status: false,
+    message: "product tidak ditemukan",
+  });
 };
 
 // handler method delete by id pada products
@@ -233,22 +219,34 @@ export const deleteProductById = async (req, res) => {
   const { id } = req.params.id;
 
   // validate if data exist or not
-  const data = await Products.findOne({
+  const product = await Products.findOne({
     product_id: id,
   });
 
-  if (data) {
-    const deleteProduct = await Products.deleteOne({
-      product_id: id,
-    });
-
-    res.status(204).json({
-      status: true,
-      message: `product with id ${id} successfully deleted`,
-      data: deleteProduct,
-    });
-    return;
+  if (product) {
+    try {
+      await Products.deleteOne({
+        product_id: id,
+      });
+      // response success
+      res.status(204).json({
+        status: true,
+        message: `product with id ${id} successfully deleted`,
+      });
+      return;
+    } catch (err) {
+      console.log(err);
+      // response server error
+      res.status(400).json({
+        status: false,
+        message: "product gagal diperbarui",
+        reason: err,
+      });
+      return;
+    }
   }
+
+  // response not found
   res.status(404).json({
     status: false,
     message: `product with id ${id} not found!`,

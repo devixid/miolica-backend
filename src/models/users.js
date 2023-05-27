@@ -46,19 +46,7 @@ const usersSchema = new Schema({
         type: mongoose.ObjectId,
         default: new mongoose.Types.ObjectId(),
       },
-      productName: {
-        type: Schema.Types.ObjectId,
-        ref: "Products",
-      },
-      descriptionProduct: {
-        type: Schema.Types.ObjectId,
-        ref: "Products",
-      },
-      unitPrice: {
-        type: Schema.Types.ObjectId,
-        ref: "Products",
-      },
-      category: {
+      product_id: {
         type: Schema.Types.ObjectId,
         ref: "Products",
       },
@@ -116,7 +104,10 @@ usersSchema.pre("findOneAndUpdate", async function middleware(next) {
 
 // statics method so now Users collection has a method
 usersSchema.statics.userLogin = async (email, password) => {
-  const user = await Users.findOne({ email });
+  const user = await Users.findOne(
+    { email },
+    { _id: 0, users_id: 1, email: 1, password: 1 },
+  );
 
   if (user) {
     const authPassword = await bcript.compare(password, user.password); // password matching process

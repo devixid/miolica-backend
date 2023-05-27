@@ -130,32 +130,32 @@ export const updatePassword = async (req, res) => {
         await Users.findOneAndUpdate(filter, update);
       } catch (err) {
         const errors = authCustomError(err);
-        res
-          .json({
-            status: false,
-            message: "password gagal diperbarui",
-            reason: errors,
-          })
-          .status(400);
+        // response server / client error
+        res.status(400).json({
+          status: false,
+          message: "password gagal diperbarui",
+          reason: errors,
+        });
         return;
       }
 
-      const updatedUser = await Users.findOne({ email });
-      res
-        .json({
-          status: true,
-          message: `user dengan email ${email} berhasil diperbarui`,
-          data: updatedUser,
-        })
-        .status(200);
+      const updatedUser = await Users.findOne(
+        { email },
+        { _id: 0, users_id: 1, email: 1, password: 1 },
+      );
+      // response success
+      res.status(200).json({
+        status: true,
+        message: `user dengan email ${email} berhasil diperbarui`,
+        data: updatedUser,
+      });
       return;
     }
-    res
-      .json({
-        status: false,
-        message: `user dengan email ${email} tidak ditemukan`,
-      })
-      .status(404);
+    // response client error
+    res.status(404).json({
+      status: false,
+      message: `user dengan email ${email} tidak ditemukan`,
+    });
     return;
   }
 
@@ -173,31 +173,31 @@ export const updatePassword = async (req, res) => {
         await Users.findOneAndUpdate(filter, update);
       } catch (err) {
         const errors = authCustomError(err);
-        res
-          .json({
-            status: false,
-            message: "password gagal diperbarui",
-            reason: errors,
-          })
-          .status(400);
+        // response server error
+        res.status(400).json({
+          status: false,
+          message: "password gagal diperbarui",
+          reason: errors,
+        });
         return;
       }
 
-      const updatedUser = await Users.findOne({ username });
-      res
-        .json({
-          status: true,
-          message: `user dengan username ${username} berhasil diperbarui`,
-          data: updatedUser,
-        })
-        .status(200);
+      const updatedUser = await Users.findOne(
+        { username },
+        { _id: 0, users_id: 1, username: 1, password: 1 },
+      );
+      // response success
+      res.status(200).json({
+        status: true,
+        message: `user dengan username ${username} berhasil diperbarui`,
+        data: updatedUser,
+      });
       return;
     }
-    res
-      .json({
-        status: false,
-        message: `user dengan username ${username} tidak ditemukan`,
-      })
-      .status(404);
+    // response client error
+    res.status(404).json({
+      status: false,
+      message: `user dengan username ${username} tidak ditemukan`,
+    });
   }
 };
