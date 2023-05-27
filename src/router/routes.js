@@ -7,7 +7,6 @@ import {
 } from "@/controllers/cart";
 import {
   addWishlist,
-  updateWishlist,
   getWishlist,
   deleteWishlistById,
 } from "@/controllers/wishlist";
@@ -39,7 +38,6 @@ routes
   .route("/users/profile/wishlist")
   .get(getWishlist)
   .post(addWishlist)
-  .put(updateWishlist)
   .delete(deleteWishlistById);
 
 // product page

@@ -49,47 +49,6 @@ export const addWishlist = async (req, res) => {
   }
 };
 
-// handler method put pada cart
-export const updateWishlist = async (req, res) => {
-  // take data from req body
-  const { productName, descriptionProduct, photoProduct, unitPrice, category } =
-    req.body;
-
-  const wishlist = [
-    {
-      wishlist_id: new mongoose.Types.ObjectId(),
-      productName,
-      descriptionProduct,
-      photoProduct,
-      unitPrice,
-      category,
-    },
-  ];
-
-  // validator if wishlist exist or not
-  const findWishlist = await Users.findOne({
-    "wishlist.wishlist_id": wishlist.wishlist_id,
-  });
-
-  // logic to update wishlist
-  if (findWishlist) {
-    Users.updateOne(
-      {
-        "wishlist.wishlist_id": wishlist.wishlist_id,
-      },
-      {
-        $set: wishlist,
-      },
-    );
-    res
-      .json({
-        status: true,
-        message: "wishlist berhasil diperbarui",
-      })
-      .status(200);
-  }
-};
-
 // handler method get pada wishlist
 export const getWishlist = async (req, res) => {
   // query to get data wishlist from collection
