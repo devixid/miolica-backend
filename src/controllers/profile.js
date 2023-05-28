@@ -6,13 +6,10 @@ const userId = login.user.users_id;
 
 // handler method get pada profile
 export const getProfileById = async (req, res) => {
+  const filter = { users_id: userId };
+  const projection = { _id: 0, cart: 0, wishlist: 0, password: 0 };
   // query to get data profile from collection
-  const profile = await Users.findOne(
-    {
-      users_id: userId,
-    },
-    { _id: 0, cart: 0, wishlist: 0, password: 0 },
-  );
+  const profile = await Users.findOne(filter, projection);
 
   // validator if data exist or not
   if (profile == null) {
@@ -32,31 +29,26 @@ export const getProfileById = async (req, res) => {
 // handler untuk update profile
 export const updateProfileById = async (req, res) => {
   const { username, email, name, address, photoProfile, saldo } = req.body;
+  const filter = { users_id: userId };
+  const projection = { _id: 0, cart: 0, wishlist: 0, password: 0 };
+  const update = {
+    $set: {
+      username,
+      email,
+      name,
+      address,
+      photoProfile,
+      saldo,
+    },
+  };
 
   // validate if profile exist or not
-  const findProfile = await Users.findOne({
-    users_id: userId,
-  });
+  const findProfile = await Users.findOne(filter);
 
   // validator update profile by id
   if (findProfile) {
-    Users.updateOne(
-      { users_id: userId },
-      {
-        $set: {
-          username,
-          email,
-          name,
-          address,
-          photoProfile,
-          saldo,
-        },
-      },
-    );
-    const updatedProfile = await Users.findOne(
-      { users_id: userId },
-      { _id: 0, cart: 0, wishlist: 0, password: 0 },
-    );
+    Users.updateOne(filter, update);
+    const updatedProfile = await Users.findOne(filter, projection);
     res.status(200).json({
       status: true,
       message: "profile berhasil diperbarui",

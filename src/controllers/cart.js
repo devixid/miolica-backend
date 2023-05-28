@@ -24,12 +24,9 @@ export const addCart = async (req, res) => {
   // logic to add cart
   if (findCart == null) {
     try {
-      await Users.updateOne(
-        { users_id: userId },
-        {
-          $set: cart,
-        },
-      );
+      const filter = { users_id: userId };
+      const update = { $set: cart };
+      await Users.updateOne(filter, update);
       // response success
       res.status(200).json({
         status: true,
@@ -67,12 +64,9 @@ export const updateCart = async (req, res) => {
   // logic to update cart
   if (findCart) {
     try {
-      Users.updateOne(
-        { "cart.cart_id": cart.cart_id },
-        {
-          $set: cart,
-        },
-      );
+      const filter = { "cart.cart_id": cart.cart_id };
+      const update = { $set: cart };
+      Users.updateOne(filter, update);
       // response success
       res.status(200).json({
         status: true,
@@ -95,13 +89,8 @@ export const updateCart = async (req, res) => {
 // handler method get pada cart
 export const getCart = async (req, res) => {
   // query to get data cart from collection
-  const cart = await Users.findOne(
-    {},
-    {
-      _id: 0,
-      cart: 1,
-    },
-  ).populate({
+  const projection = { _id: 0, cart: 1 };
+  const option = {
     path: "product_id",
     select: [
       "productName",
@@ -111,7 +100,8 @@ export const getCart = async (req, res) => {
       "category",
     ],
     strictPopulate: false,
-  });
+  };
+  const cart = await Users.findOne({}, projection).populate(option);
 
   // validator if data exist or not
   if (cart == null) {
@@ -133,12 +123,9 @@ export const deleteCartById = async (req, res) => {
   const { cart_id } = req.body;
   // search data from collection based on cart_id
   try {
-    await Users.updateOne(
-      {
-        cart: { $elemMatch: { cart_id } },
-      },
-      { $unset: { cart: "" } },
-    );
+    const filter = { cart: { $elemMatch: { cart_id } } };
+    const update = { $unset: { cart: "" } };
+    await Users.updateOne(filter, update);
     // response success
     res.status(200).json({
       status: true,

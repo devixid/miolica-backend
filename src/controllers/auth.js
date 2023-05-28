@@ -118,14 +118,11 @@ export const updatePassword = async (req, res) => {
 
   // validator update password by email
   if (email) {
-    const findEmail = await Users.findOne({ email });
+    const filter = { email };
+    const update = { $set: { password } };
+    const projection = { _id: 0, users_id: 1, email: 1, password: 1 };
+    const findEmail = await Users.findOne(filter);
     if (findEmail) {
-      const filter = { email };
-      const update = {
-        $set: {
-          password,
-        },
-      };
       try {
         await Users.findOneAndUpdate(filter, update);
       } catch (err) {
@@ -139,10 +136,7 @@ export const updatePassword = async (req, res) => {
         return;
       }
 
-      const updatedUser = await Users.findOne(
-        { email },
-        { _id: 0, users_id: 1, email: 1, password: 1 },
-      );
+      const updatedUser = await Users.findOne(filter, projection);
       // response success
       res.status(200).json({
         status: true,
@@ -161,14 +155,11 @@ export const updatePassword = async (req, res) => {
 
   // validator update password by username
   if (username) {
-    const findUsername = await Users.findOne({ username });
+    const filter = { username };
+    const update = { $set: { password } };
+    const projection = { _id: 0, users_id: 1, username: 1, password: 1 };
+    const findUsername = await Users.findOne(filter);
     if (findUsername) {
-      const filter = { username };
-      const update = {
-        $set: {
-          password,
-        },
-      };
       try {
         await Users.findOneAndUpdate(filter, update);
       } catch (err) {
@@ -182,10 +173,7 @@ export const updatePassword = async (req, res) => {
         return;
       }
 
-      const updatedUser = await Users.findOne(
-        { username },
-        { _id: 0, users_id: 1, username: 1, password: 1 },
-      );
+      const updatedUser = await Users.findOne(filter, projection);
       // response success
       res.status(200).json({
         status: true,

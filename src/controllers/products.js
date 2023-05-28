@@ -75,12 +75,13 @@ export const addProduct = async (req, res) => {
 
 // handler method get all pada products
 export const getAllProducts = async (req, res) => {
-  // query to get all products from collection
-  const product = await Products.find().populate({
+  const option = {
     path: "storeName",
     select: "storeName",
     strictPopulate: false,
-  });
+  };
+  // query to get all products from collection
+  const product = await Products.find().populate(option);
 
   // validator if data exist or not
   if (product == null) {
@@ -100,15 +101,14 @@ export const getAllProducts = async (req, res) => {
 // handler get by name pada products
 export const getProductById = async (req, res) => {
   const { id } = req.params.id;
-
-  // query to get data products from collection
-  const product = await Products.findOne({
-    product_id: id,
-  }).populate({
+  const filter = { product_id: id };
+  const option = {
     path: "storeName",
     select: "storeName",
     strictPopulate: false,
-  });
+  };
+  // query to get data products from collection
+  const product = await Products.findOne(filter).populate(option);
 
   // validator if data exist or not
   if (product) {
@@ -128,15 +128,14 @@ export const getProductById = async (req, res) => {
 // handler get by categries pada products
 export const getProductByCategories = async (req, res) => {
   const { category } = req.params.category;
-
-  // query to get data products from collection
-  const product = await Products.find({
-    category,
-  }).populate({
+  const filter = { category };
+  const option = {
     path: "storeName",
     select: "storeName",
     strictPopulate: false,
-  });
+  };
+  // query to get data products from collection
+  const product = await Products.find(filter).populate(option);
 
   // validator if data exist or not
   if (product) {
@@ -166,28 +165,25 @@ export const updateProductById = async (req, res) => {
     Category,
     quantityProduct,
   } = req.body;
+  const filter = { product_id };
+  const update = {
+    $set: {
+      productName,
+      descriptionProduct,
+      photoProduct,
+      unitPrice,
+      address,
+      location,
+      Category,
+      quantityProduct,
+    },
+  };
 
   // validate if product exist or not
-  const findProduct = await Products.findOne({
-    product_id,
-  });
+  const findProduct = await Products.findOne(filter);
 
   // validator update profile by id
   if (findProduct) {
-    const filter = { product_id };
-    const update = {
-      $set: {
-        productName,
-        descriptionProduct,
-        photoProduct,
-        unitPrice,
-        address,
-        location,
-        Category,
-        quantityProduct,
-      },
-    };
-
     try {
       await Products.findOneAndUpdate(filter, update);
     } catch (err) {
@@ -200,7 +196,7 @@ export const updateProductById = async (req, res) => {
       return;
     }
 
-    const updatedProduct = await Products.findOne({ product_id });
+    const updatedProduct = await Products.findOne(filter);
     res.status(200).json({
       status: true,
       message: "product berhasil diperbarui",
@@ -217,17 +213,14 @@ export const updateProductById = async (req, res) => {
 // handler method delete by id pada products
 export const deleteProductById = async (req, res) => {
   const { id } = req.params.id;
+  const filter = { product_id: id };
 
   // validate if data exist or not
-  const product = await Products.findOne({
-    product_id: id,
-  });
+  const product = await Products.findOne(filter);
 
   if (product) {
     try {
-      await Products.deleteOne({
-        product_id: id,
-      });
+      await Products.deleteOne(filter);
       // response success
       res.status(204).json({
         status: true,

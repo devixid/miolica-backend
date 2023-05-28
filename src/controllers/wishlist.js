@@ -25,12 +25,9 @@ export const addWishlist = async (req, res) => {
   // logic to add wishlist
   if (findWishlist == null) {
     try {
-      await Users.updateOne(
-        { users_id: userId },
-        {
-          $set: wishlist,
-        },
-      );
+      const filter = { users_id: userId };
+      const update = { $set: { wishlist } };
+      await Users.updateOne(filter, update);
       // response success
       res.status(200).json({
         status: true,
@@ -51,12 +48,14 @@ export const addWishlist = async (req, res) => {
 
 // handler method get pada wishlist
 export const getWishlist = async (req, res) => {
-  // query to get data wishlist from collection
-  const wishlist = await Users.findOne({}).populate({
+  const projection = { _id: 0, wishlist: 1 };
+  const option = {
     path: "product_id",
     select: ["productName", "descriptionProduct", "photoProduct", "unitPrice"],
     strictPopulate: false,
-  });
+  };
+  // query to get data wishlist from collection
+  const wishlist = await Users.findOne({}, projection).populate(option);
 
   // validator if data exist or not
   if (wishlist == null) {
@@ -78,12 +77,9 @@ export const deleteWishlistById = async (req, res) => {
   const { wishlist_id } = req.body;
   // search data from collection based on wishlist_id
   try {
-    await Users.updateOne(
-      {
-        wishlist: { $elemMatch: { wishlist_id } },
-      },
-      { $unset: { wishlist: "" } },
-    );
+    const filter = { wishlist: { $elemMatch: { wishlist_id } } };
+    const update = { $unset: { wishlist: "" } };
+    await Users.updateOne(filter, update);
     // response success
     res.status(200).json({
       status: true,
