@@ -1,4 +1,5 @@
 import { Router } from "express";
+import { jwtAuth } from "@/middleware/authMiddleware";
 import {
   addCart,
   updateCart,
@@ -28,17 +29,17 @@ routes.route("/users/auth").get(login).post(signup).patch(updatePassword);
 // cart page
 routes
   .route("/users/profile/cart")
-  .get(getCart)
-  .post(addCart)
-  .put(updateCart)
-  .delete(deleteCartById);
+  .get(jwtAuth, getCart)
+  .post(jwtAuth, addCart)
+  .put(jwtAuth, updateCart)
+  .delete(jwtAuth, deleteCartById);
 
 // wishlist page
 routes
   .route("/users/profile/wishlist")
-  .get(getWishlist)
-  .post(addWishlist)
-  .delete(deleteWishlistById);
+  .get(jwtAuth, getWishlist)
+  .post(jwtAuth, addWishlist)
+  .delete(jwtAuth, deleteWishlistById);
 
 // product page
 routes.route("/products").get(getAllProducts).post(addProduct);
@@ -46,7 +47,7 @@ routes.route("/product/:categories").get(getProductByCategories);
 routes
   .route("/product/:id")
   .get(getProductById)
-  .put(updateProductById)
-  .delete(deleteProductById);
+  .put(jwtAuth, updateProductById)
+  .delete(jwtAuth, deleteProductById);
 
 export { routes };

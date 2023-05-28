@@ -63,15 +63,11 @@ export const signup = async (req, res) => {
   // saving docs into collection
   try {
     await signUpDocs.save();
-    const token = createToken(signUpDocs.users_id);
-    res
-      .status(200)
-      .cookie("jwt", token, { htpOnly: true, maxAge: maxAge * 1000 })
-      .json({
-        status: true,
-        message: "data berhasil diinput",
-        data: signUpDocs,
-      });
+    res.status(201).json({
+      status: true,
+      message: "data berhasil diinput",
+      data: signUpDocs,
+    });
     return;
   } catch (err) {
     // validate if data not right
@@ -188,4 +184,8 @@ export const updatePassword = async (req, res) => {
       message: `user dengan username ${username} tidak ditemukan`,
     });
   }
+};
+
+export const logout = (req, res) => {
+  res.cookie("jwt", "", { htpOnly: true, maxAge: 1 }).redirect("/");
 };
