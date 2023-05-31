@@ -42,7 +42,7 @@ const usersSchema = new Schema(
       maxLength: [20, "Address cannot be longer than 50 characters"],
     },
     wishlist: [
-      {
+      new Schema({
         wishlist_id: {
           type: mongoose.ObjectId,
           default: new mongoose.Types.ObjectId(),
@@ -51,10 +51,10 @@ const usersSchema = new Schema(
           type: Schema.Types.ObjectId,
           ref: "Products",
         },
-      },
+      }),
     ],
     cart: [
-      {
+      new Schema({
         cart_id: {
           type: mongoose.ObjectId,
           default: new mongoose.Types.ObjectId(),
@@ -74,7 +74,7 @@ const usersSchema = new Schema(
           required: true,
           max: [9, "the total price exceeds the maximum transaction limit"],
         },
-      },
+      }),
     ],
     photoProfile: String,
     saldo: {
@@ -104,21 +104,3 @@ usersSchema.pre("findOneAndUpdate", async function middleware(next) {
   this.getUpdate().$set.password = hashedPassword;
   next();
 });
-
-// statics method so now Users collection has a method
-usersSchema.statics.userLogin = async (email, password) => {
-  const user = await Users.findOne(
-    { email },
-    { _id: 0, users_id: 1, email: 1, password: 1 },
-  );
-
-  if (user) {
-    const authPassword = await bcript.compare(password, user.password); // password matching process
-
-    if (authPassword) {
-      return user; // return data user if password correct
-    }
-    throw Error("Password incorrect"); // error message if email incorrect
-  }
-  throw Error("Email incorrect"); // error message if email incorrect
-};

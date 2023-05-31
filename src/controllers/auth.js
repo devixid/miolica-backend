@@ -109,7 +109,7 @@ export const login = async (req, res) => {
 };
 
 // handler update password user method put
-export const updatePassword = async (req, res) => {
+export const forgotPassword = async (req, res) => {
   const { email, username, password } = req.body;
 
   // validator update password by email

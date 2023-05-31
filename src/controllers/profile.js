@@ -1,12 +1,10 @@
 import { Users } from "@/models/users";
 // fetch id from handler login getUser
-import { login } from "./auth";
-
-const userId = login.user.users_id;
 
 // handler method get pada profile
 export const getProfileById = async (req, res) => {
-  const filter = { users_id: userId };
+  const { users_id } = req.body;
+  const filter = { users_id };
   const projection = { _id: 0, cart: 0, wishlist: 0, password: 0 };
   // query to get data profile from collection
   const profile = await Users.findOne(filter, projection);
@@ -28,8 +26,9 @@ export const getProfileById = async (req, res) => {
 
 // handler untuk update profile
 export const updateProfileById = async (req, res) => {
-  const { username, email, name, address, photoProfile, saldo } = req.body;
-  const filter = { users_id: userId };
+  const { users_id, username, email, name, address, saldo } = req.body;
+  const { photoProfile } = req.file.path;
+  const filter = { users_id };
   const projection = { _id: 0, cart: 0, wishlist: 0, password: 0 };
   const update = {
     $set: {

@@ -1,14 +1,10 @@
 import { Users } from "@/models/users";
 import mongoose from "mongoose";
-// fetch id from handler login getUser
-import { login } from "./auth";
-
-const userId = login.user.users_id;
 
 // handler method post put pada cart
 export const addCart = async (req, res) => {
   // take data from req body
-  const { product_id, quantity, totalPrice } = req.body;
+  const { users_id, product_id, quantity, totalPrice } = req.body;
 
   const cart = [
     {
@@ -24,7 +20,7 @@ export const addCart = async (req, res) => {
   // logic to add cart
   if (findCart == null) {
     try {
-      const filter = { users_id: userId };
+      const filter = { users_id };
       const update = { $set: cart };
       await Users.updateOne(filter, update);
       // response success

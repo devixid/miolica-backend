@@ -1,14 +1,10 @@
 import { Users } from "@/models/users";
 import mongoose from "mongoose";
-// fetch id from handler login getUser
-import { login } from "./auth";
-
-const userId = login.user.users_id;
 
 // handler method post pada cart
 export const addWishlist = async (req, res) => {
   // take data from req body
-  const { product_id } = req.body;
+  const { users_id, product_id } = req.body;
 
   const wishlist = [
     {
@@ -25,7 +21,7 @@ export const addWishlist = async (req, res) => {
   // logic to add wishlist
   if (findWishlist == null) {
     try {
-      const filter = { users_id: userId };
+      const filter = { users_id };
       const update = { $set: { wishlist } };
       await Users.updateOne(filter, update);
       // response success
