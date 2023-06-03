@@ -2,8 +2,8 @@ import { Router } from "express";
 import { jwtAuth } from "@/middleware/authMiddleware";
 import {
   addCart,
-  updateCart,
-  getCart,
+  updateCartById,
+  getAllCart,
   deleteCartById,
 } from "@/controllers/cart";
 
@@ -11,9 +11,9 @@ const routes = Router();
 
 routes
   .all(jwtAuth)
-  .get(getCart)
+  .get(getAllCart)
   .post(addCart)
-  .put(updateCart)
+  .put(updateCartById)
   .delete(deleteCartById);
 
 export default routes;

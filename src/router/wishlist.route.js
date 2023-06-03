@@ -2,7 +2,7 @@ import { Router } from "express";
 import { jwtAuth } from "@/middleware/authMiddleware";
 import {
   addWishlist,
-  getWishlist,
+  getAllWishlistById,
   deleteWishlistById,
 } from "@/controllers/wishlist";
 
@@ -10,7 +10,7 @@ const routes = Router();
 
 routes
   .all(jwtAuth)
-  .get(getWishlist)
+  .get(getAllWishlistById)
   .post(addWishlist)
   .delete(deleteWishlistById);
 

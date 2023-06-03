@@ -57,7 +57,7 @@ export const updateProfileById = catchAsync(async (body, file) => {
         statusCode: 201,
         status: true,
         message: "Profile berhasil diperbarui",
-        updatedProfile,
+        profile: updatedProfile,
       };
     } catch (err) {
       const errors = authCustomError(err);
@@ -70,7 +70,7 @@ export const updateProfileById = catchAsync(async (body, file) => {
       };
     }
   }
-      // 6) return if profile not exist
+  // 6) return if profile not exist
   return {
     statusCode: 404,
     status: false,

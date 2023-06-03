@@ -22,7 +22,7 @@ export const getProfileById = catchAsync(async (req, res) => {
 
 // handler untuk update profile
 export const updateProfileById = catchAsync(async (req, res) => {
-  const { statusCode, status, message, updatedProfile } =
+  const { statusCode, status, message, profile } =
     profileService.updateProfileById(req.body, req.file);
 
   if (status === false) {
@@ -34,6 +34,6 @@ export const updateProfileById = catchAsync(async (req, res) => {
   return res.status(statusCode).json({
     status,
     message,
-    updatedProfile,
+    profile,
   });
 });

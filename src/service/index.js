@@ -8,6 +8,17 @@ import {
   updateProductById,
   deleteProductById,
 } from "./product.service";
+import {
+  addCart,
+  getAllCart,
+  updateCartById,
+  deleteCartById,
+} from "./cart.service";
+import {
+  addWishlist,
+  getAllWishlistById,
+  deleteWishlistById,
+} from "./wishlist.service";
 
 const authService = {
   signup,
@@ -27,6 +38,19 @@ const productService = {
   getProductByCategories,
   updateProductById,
   deleteProductById,
-}
+};
 
-export { authService, profileService, productService };
+const cartService = {
+  addCart,
+  getAllCart,
+  updateCartById,
+  deleteCartById,
+};
+
+const wishlistService = {
+  addWishlist,
+  getAllWishlistById,
+  deleteWishlistById,
+};
+
+export { authService, profileService, productService, cartService, wishlistService };
