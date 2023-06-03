@@ -46,3 +46,17 @@ export const singleFile = (photoProfile) => (req, res, next) => {
     return next(new Error(err, 500));
   });
 };
+
+// upload multiple file
+export const anyFile = (photoProduct) => (req, res, next) => {
+  const upload = multer({
+    storage,
+    limits,
+    fileFilter,
+  }).any(photoProduct);
+
+  upload(req, res, (err) => {
+    if (err) return next(new Error(err, 500));
+    return next();
+  });
+};

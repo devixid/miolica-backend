@@ -18,7 +18,11 @@ export const productSchema = new Schema(
       maxLength: [50, "description cannot be longer than 50 characters"],
     },
     photoProduct: {
-      type: String,
+      type: [
+        {
+          type: String,
+        },
+      ],
       required: [true, "photo product required, please input photo of product"],
     },
     unitPrice: {

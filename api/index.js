@@ -2,7 +2,7 @@ import express from "express";
 import cors from "cors";
 import helmet from "helmet";
 import { init } from "@/config";
-import { routes } from "@/router/routes";
+import { routes } from "@/router";
 import { urlencoded, json } from "body-parser";
 
 /** @type {Express} */

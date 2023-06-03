@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { jwtAuth } from "@/middleware/authMiddleware";
+import { anyFile } from "@/utils/multers";
 import {
   addProduct,
   getAllProducts,
@@ -11,12 +12,12 @@ import {
 
 const routes = Router();
 
-routes.get(getAllProducts).post(addProduct);
+routes.get(getAllProducts).post(jwtAuth, anyFile("photoProduct"), addProduct);
 routes.route("/:categories").get(getProductByCategories);
 routes
   .route("/:id")
   .get(getProductById)
-  .put(jwtAuth, updateProductById)
+  .put(jwtAuth, anyFile("photoProduct"), updateProductById)
   .delete(jwtAuth, deleteProductById);
 
 export default routes;
